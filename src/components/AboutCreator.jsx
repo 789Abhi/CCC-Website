@@ -1,0 +1,65 @@
+import { motion } from "framer-motion";
+import Section from "./Section";
+import Heading from "./Heading";
+import { brainwave, check, curve } from "../assets";
+
+const AboutCreator = () => {
+  return (
+    <Section crosses className="!py-10 lg:!py-16 xl:!py-20" id="about">
+      <div className="container px-5 mx-auto">
+        <Heading
+          className="md:max-w-md lg:max-w-2xl"
+          title={
+            <>
+              Meet {" "}
+              <span className="inline-block relative font-semibold">
+                Abhishek
+                <img
+                  src={curve}
+                  className="absolute top-full left-0 w-full xl:-mt-2 pointer-events-none select-none"
+                  width={624}
+                  height={28}
+                  alt="Curve"
+                />
+              </span>
+            </>
+          }
+        />
+
+        <div className="relative">
+          <div className="relative z-1 max-w-[62rem] mx-auto text-center mb-10 lg:mb-16 -mt-14">
+            <p className="body-1 text-n-3 mb-6">
+              Founder, CEO & Lead Developer behind <span className="text-color-1 font-semibold">CCC</span>
+            </p>
+            <div className="relative inline-block">
+              <img
+                src="/src/assets/collaboration/Abhishek.jpg"
+                alt="Abhishek"
+                className="w-24 h-24 lg:w-32 lg:h-32 rounded-full mx-auto mb-6 border-4 border-n-6 object-cover"
+              />
+            </div>
+
+            <div className="max-w-3xl mx-auto">
+              <p className="body-2 text-n-4 mb-6">
+                With over 3 years of experience in web development, he's
+                dedicated his career to creating efficient, scalable solutions
+                for WordPress developers. <span className="text-color-4 font-semibold">Custom Craft Components</span>  was born from
+                the frustration of building the same components repeatedly
+                across different projects.
+              </p>
+
+              <p className="body-2 text-n-4 mb-6">
+                My mission is to streamline the WordPress development workflow
+                by providing <span className="text-color-1 font-semibold">AI-powered tools</span> that generate clean, maintainable
+                code. I believe that developers should focus on solving unique
+                problems, not reinventing common components.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+};
+
+export default AboutCreator;

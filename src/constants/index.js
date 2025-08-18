@@ -51,12 +51,12 @@ export const navigation = [
   {
     id: "2",
     title: "Comparison",
-    url: "#how-to-use",
+    url: "#comparison",
   },
   {
     id: "3",
-    title: "About",
-    url: "#roadmap",
+    title: "About Creator",
+    url: "#about",
   },
   {
     id: "4",

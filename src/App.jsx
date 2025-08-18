@@ -7,6 +7,8 @@ import Hero from "./components/Hero";
 import Pricing from "./components/Pricing";
 import Roadmap from "./components/Roadmap";
 import Services from "./components/Services";
+import Comparison from "./components/Comparison";
+import AboutCreator from "./components/AboutCreator";
 
 const App = () => {
   return (
@@ -15,10 +17,10 @@ const App = () => {
         <Header />
         <Hero />
         <Benefits />
-        <Collaboration />
         <Services />
+        <Comparison />
+        <AboutCreator />
         <Pricing />
-        <Roadmap />
         <Footer />
       </div>
       <ButtonGradient />
