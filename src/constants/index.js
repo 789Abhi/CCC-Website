@@ -286,7 +286,7 @@ export const pricing = [
     description: "Advanced AI chatbot, priority support, analytics dashboard",
     price: "125/yr",
     features: [
-      "Up to 10 Websites",
+      "Up to 15 Websites",
       "200 Components",
       "Priority Support",
       "AI-Powered Workflow (unlimited AI usage + automation tools)",
