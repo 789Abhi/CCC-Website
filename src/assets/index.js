@@ -37,6 +37,9 @@ import protopie from "./collaboration/protopie.png";
 import raindrop from "./collaboration/raindrop.png";
 import slack from "./collaboration/slack.png";
 
+import ceo from "./collaboration/Abhishek.jpg";
+
+
 import service1 from "./services/service-1.png";
 import service2 from "./services/service-2.png";
 import service3 from "./services/service-3.png";
@@ -51,6 +54,8 @@ import roadmap1 from "./roadmap/image-1.png";
 import roadmap2 from "./roadmap/image-2.png";
 import roadmap3 from "./roadmap/image-3.png";
 import roadmap4 from "./roadmap/image-4.png";
+import roadmap5 from "./roadmap/image-5.jpg";
+import step1image from "./roadmap/Step-1.png";
 import undone from "./roadmap/undone.svg";
 
 import notification1 from "./notification/image-1.png";
@@ -125,6 +130,7 @@ export {
   roadmap2,
   roadmap3,
   roadmap4,
+  roadmap5,
   undone,
   notification1,
   notification2,
@@ -146,4 +152,6 @@ export {
   instagram,
   telegram,
   twitter,
+  step1image,
+  ceo
 };

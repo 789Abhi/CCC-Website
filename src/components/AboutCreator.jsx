@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import Section from "./Section";
 import Heading from "./Heading";
-import { brainwave, check, curve } from "../assets";
+import { brainwave, ceo, check, curve } from "../assets";
 
 const AboutCreator = () => {
   return (
@@ -33,7 +33,7 @@ const AboutCreator = () => {
             </p>
             <div className="relative inline-block">
               <img
-                src="/src/assets/collaboration/Abhishek.jpg"
+                src={ceo}
                 alt="Abhishek"
                 className="w-24 h-24 lg:w-32 lg:h-32 rounded-full mx-auto mb-6 border-4 border-n-6 object-cover"
               />
@@ -50,7 +50,7 @@ const AboutCreator = () => {
 
               <p className="body-2 text-n-4 mb-6">
                 My mission is to streamline the WordPress development workflow
-                by providing <span className="text-color-1 font-semibold">AI-powered tools</span> that generate clean, maintainable
+                by providing AI-powered tools that generate clean, maintainable
                 code. I believe that developers should focus on solving unique
                 problems, not reinventing common components.
               </p>

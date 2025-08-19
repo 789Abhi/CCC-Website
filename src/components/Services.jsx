@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { service1, service2, service3, check } from "../assets";
+import { service1, service2, service3, check, roadmap5 } from "../assets";
 import {
   brainwaveServicesIcons,
   step1,
@@ -17,6 +17,7 @@ import {
   VideoBar,
   VideoChatMessage,
 } from "./design/Services";
+
 
 const Services = () => {
   const [isPlaying, setIsPlaying] = useState(true);
@@ -52,8 +53,8 @@ const Services = () => {
                 className="w-full h-full object-cover md:object-right"
                 width={800}
                 height={730}
-                alt="Smartest AI"
-                src={service1}
+                alt="Describe Your Component"
+                src={roadmap5}
               />
             </div>
 

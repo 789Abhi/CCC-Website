@@ -131,6 +131,15 @@ export default {
         ".button": {
           "@apply font-code text-xs font-bold uppercase tracking-wider": {},
         },
+        ".perspective-1000": {
+          "perspective": "1000px",
+        },
+        ".preserve-3d": {
+          "transform-style": "preserve-3d",
+        },
+        ".rotate-y-0": {
+          "transform": "rotateY(0deg)",
+        },
       });
       addUtilities({
         ".tap-highlight-color": {

@@ -1,19 +1,37 @@
-import { check2, grid, loading1 } from "../assets";
+import { curve, grid, check } from "../assets";
 import { roadmap } from "../constants";
 import Button from "./Button";
 import Heading from "./Heading";
 import Section from "./Section";
-import Tagline from "./Tagline";
 import { Gradient } from "./design/Roadmap";
 
 const Roadmap = () => (
   <Section className="overflow-hidden" id="roadmap">
     <div className="container md:pb-10">
-      <Heading tag="Ready to get started" title="What we're working on" />
+      <Heading
+        tag="Ready To Get Started"
+        className="md:max-w-md lg:max-w-2xl"
+        title={
+          <>
+            From Idea to{" "}
+            <span className="inline-block relative font-semibold">
+              Reality
+              <img
+                src={curve}
+                className="absolute top-full left-0 w-full xl:-mt-2 pointer-events-none select-none"
+                width={624}
+                height={28}
+                alt="Curve"
+              />
+            </span>{" "}
+            <br /> in Simple 4 Steps
+          </>
+        }
+      />
 
       <div className="relative grid gap-6 md:grid-cols-2 md:gap-4 md:pb-[7rem]">
         {roadmap.map((item) => {
-          const status = item.status === "done" ? "Done" : "In progress";
+          const stepNumber = `Step`;
 
           return (
             <div
@@ -34,19 +52,15 @@ const Roadmap = () => (
                 </div>
                 <div className="relative z-1">
                   <div className="flex items-center justify-between max-w-[27rem] mb-8 md:mb-20">
-                    <Tagline>{item.date}</Tagline>
-
-                    <div className="flex items-center px-4 py-1 bg-n-1 rounded text-n-8">
-                      <img
-                        className={`mr-2.5 ${
-                          item.status !== "done" && "animate-spin"
-                        } pointer-events-none select-none`}
-                        src={item.status === "done" ? check2 : loading1}
-                        width={16}
-                        height={16}
-                        alt={status}
-                      />
-                      <div className="tagline">{status}</div>
+                    <div className="flex items-center px-4 py-1 bg-color-1 rounded text-n-8">
+                      <div className="tagline text-white font-semibold">
+                        {stepNumber}
+                      </div>
+                      <div className="w-10 h-10 bg-n-8 ml-2 rounded-full flex items-center justify-center mr-2.5">
+                        <span className="text-color-1  font-bold text-sm">
+                          {parseInt(item.id) + 1}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
@@ -61,8 +75,29 @@ const Roadmap = () => (
                       alt={item.title}
                     />
                   </div>
+
                   <h4 className="h4 mb-4">{item.title}</h4>
-                  <p className="body-2 text-n-4">{item.text}</p>
+                  <p className="body-2 text-n-4 mb-6">{item.text}</p>
+
+                  {/* Points List */}
+                  {item.points && (
+                    <ul className="space-y-3">
+                      {item.points.map((point, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <div className="w-5 h-5 bg-color-1 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <img
+                              width={12}
+                              height={12}
+                              src={check}
+                              alt="check"
+                              className="pointer-events-none select-none"
+                            />
+                          </div>
+                          <span className="body-2 text-n-2">{point.title}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               </div>
             </div>

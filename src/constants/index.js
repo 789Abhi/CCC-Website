@@ -28,6 +28,8 @@ import {
   roadmap2,
   roadmap3,
   roadmap4,
+  roadmap5,
+  step1image,
   searchMd,
   slack,
   sliders04,
@@ -111,36 +113,78 @@ export const brainwaveServicesIcons = [
 export const roadmap = [
   {
     id: "0",
-    title: "Voice recognition",
-    text: "Enable the chatbot to understand and respond to voice commands, making it easier for users to interact with the app hands-free.",
-    date: "May 2023",
-    status: "done",
-    imageUrl: roadmap1,
+    title: "Describe Your Component",
+    text: "Simply tell CCC what you need in natural language. 'A testimonial section with image, name, and quote.'",
+    points: [
+      {
+        title: "Natural language input",
+      },
+      {
+        title: "No technical knowledge required",
+      },
+      {
+        title: "AI understands context",
+      },
+    ],
+    imageUrl: step1image,
     colorful: true,
   },
   {
     id: "1",
-    title: "Gamification",
-    text: "Add game-like elements, such as badges or leaderboards, to incentivize users to engage with the chatbot more frequently.",
-    date: "May 2023",
-    status: "progress",
+    title: "AI Generates Everything",
+    text: "Our AI creates the complete component structure, fields, PHP templates, and responsive styling.",
+    points: [
+      {
+        title: "Auto-generated templates",
+      },
+      {
+        title: "Responsive design",
+      },
+      {
+        title: "Clean, maintainable code",
+      },
+    ],
     imageUrl: roadmap2,
+    colorful: true,
   },
   {
     id: "2",
-    title: "Chatbot customization",
-    text: "Allow users to customize the chatbot's appearance and behavior, making it more engaging and fun to interact with.",
-    date: "May 2023",
-    status: "done",
+    title: "Customize & Deploy",
+    text: "Fine-tune your component through our intuitive interface and deploy instantly to your WordPress site.",
+    points: [
+      {
+        title: "Visual customization",
+      },
+      {
+        title: "Real-time preview",
+      },
+      {
+        title: "One-click deployment",
+      },
+    ],
     imageUrl: roadmap3,
+    colorful: true,
   },
   {
     id: "3",
-    title: "Integration with APIs",
-    text: "Allow the chatbot to access external data sources, such as weather APIs or news APIs, to provide more relevant recommendations.",
-    date: "May 2023",
-    status: "progress",
+    title: "Use Anywhere",
+    text: "Add your component to any page, customize content, and watch your site come to life with minimal effort.",
+    points: [
+      {
+        title: "Reusable components",
+      },
+      {
+        title: "Multi-instance support",
+      },
+      {
+        title: "Theme integration",
+      },
+      {
+        title: "Import-Export to AnyWhere Globally",
+      },
+    ],
     imageUrl: roadmap4,
+    colorful: true,
   },
 ];
 
@@ -225,39 +269,43 @@ export const collabApps = [
 export const pricing = [
   {
     id: "0",
-    title: "Basic",
-    description: "AI chatbot, personalized recommendations",
-    price: "0",
+    title: "Personal",
+    description: "Perfect for trying it out",
+    price: "39/yr",
     features: [
-      "An AI chatbot that can understand your queries",
-      "Personalized recommendations based on your preferences",
-      "Ability to explore the app and its features without any cost",
+      "1 Website",
+      "50 Components",
+      "Basic AI Assistance",
+      "Standard Support",
     ],
     premium: false,
   },
   {
     id: "1",
-    title: "Premium",
+    title: "Freelancer",
     description: "Advanced AI chatbot, priority support, analytics dashboard",
-    price: "9.99",
+    price: "125/yr",
     features: [
-      "An advanced AI chatbot that can understand complex queries",
-      "An analytics dashboard to track your conversations",
-      "Priority support to solve issues quickly",
+      "Up to 10 Websites",
+      "200 Components",
+      "Priority Support",
+      "AI-Powered Workflow (unlimited AI usage + automation tools)",
     ],
     premium: true,
   },
   {
     id: "2",
-    title: "Enterprise",
+    title: "Agency",
     description: "Custom AI chatbot, advanced analytics, dedicated account",
-    price: null,
+    price: "197/yr",
     features: [
-      "An AI chatbot that can understand your queries",
-      "Personalized recommendations based on your preferences",
-      "Ability to explore the app and its features without any cost",
+      "Unlimited Websites",
+      "Unlimited Components",
+      "Premium Support",
+      "AI-Powered Workflow (unlimited AI usage + automation tools)",
+      "Future Add-ons Included",
     ],
-    premium: false,
+    premium: true,
   },
 ];
 
