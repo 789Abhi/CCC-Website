@@ -23,6 +23,7 @@ import loading from "./loading.png";
 import background from "./background.jpg";
 
 import curve from "./hero/curve.png";
+import Websitelogo from "./hero/Custom craft components.png";
 import robot from "./hero/robot.jpg";
 import heroBackground from "./hero/hero-background.jpg";
 
@@ -153,5 +154,6 @@ export {
   telegram,
   twitter,
   step1image,
-  ceo
+  ceo,
+  Websitelogo
 };

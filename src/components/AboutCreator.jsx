@@ -2,13 +2,14 @@ import { motion } from "framer-motion";
 import Section from "./Section";
 import Heading from "./Heading";
 import { brainwave, ceo, check, curve } from "../assets";
+import Button from "./Button";
 
 const AboutCreator = () => {
   return (
     <Section crosses className="!py-10 lg:!py-16 xl:!py-20" id="about">
       <div className="container px-5 mx-auto">
         <Heading
-          className="md:max-w-md lg:max-w-2xl"
+          className="md:max-w-md lg:max-w-2xl text-center"
           title={
             <>
               Meet {" "}
@@ -27,7 +28,7 @@ const AboutCreator = () => {
         />
 
         <div className="relative">
-          <div className="relative z-1 max-w-[62rem] mx-auto text-center mb-10 lg:mb-16 -mt-14">
+          <div className="relative z-1 max-w-[62rem] mx-auto text-center mb-10 lg:mb-16 lg:-mt-14 ">
             <p className="body-1 text-n-3 mb-6">
               Founder, CEO & Lead Developer behind <span className="text-color-1 font-semibold">CCC</span>
             </p>
@@ -50,6 +51,24 @@ const AboutCreator = () => {
             </div>
           </div>
         </div>
+
+         {/* Call to Action */}
+            <div className="text-center mt-16">
+              <div className="max-w-2xl mx-auto">
+                <h3 className="h3 mb-4">
+                  Ready to revolutionize your WordPress development workflow?
+                </h3>
+                <p className="body-1 text-n-3 mb-8">
+                  Join a Community of developers who are already building faster
+                  with CCC
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button className=" flex" href="https://forms.gle/xhHv7AQymRNk5jmg6" external>
+                    Lets Get Started
+                  </Button>
+                </div>
+              </div>
+            </div>
       </div>
     </Section>
   );

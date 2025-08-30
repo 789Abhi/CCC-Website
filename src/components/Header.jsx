@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
 
-import { brainwave } from "../assets";
+import { brainwave, Websitelogo } from "../assets";
 import MenuSvg from "../assets/svg/MenuSvg";
 import { links } from "../config";
 import { navigation } from "../constants";
@@ -38,7 +38,7 @@ const Header = () => {
     >
       <div className="flex items-center px-5 lg:px-7.5 xl:px-10 max-lg:py-4">
         <a className="block w-[12rem] xl:mr-8" href="#hero">
-            CCC
+            <img className="w-full h-[150px] object-contain" src={Websitelogo} alt="" />
         </a>
 
         <nav
@@ -70,7 +70,7 @@ const Header = () => {
           <HambugerMenu />
         </nav>
 
-        <Button className="hidden lg:flex" href="" external>
+        <Button className="hidden lg:flex" href="https://forms.gle/xhHv7AQymRNk5jmg6" external>
           Lets Contact
         </Button>
 

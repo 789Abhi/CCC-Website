@@ -59,7 +59,7 @@ const Hero = () => {
             , Create complete, styled, reusable page sections faster than ever.
           </p>
 
-          <Button href="#pricing" white>
+          <Button external href="https://forms.gle/xhHv7AQymRNk5jmg6" white>
             Get started
           </Button>
         </div>
