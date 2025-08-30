@@ -20,7 +20,6 @@ const App = () => {
         <Roadmap/>
         <Comparison />
         <AboutCreator />
-        <Pricing />
         <Footer />
       </div>
       <ButtonGradient />

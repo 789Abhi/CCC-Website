@@ -31,13 +31,6 @@ const AboutCreator = () => {
             <p className="body-1 text-n-3 mb-6">
               Founder, CEO & Lead Developer behind <span className="text-color-1 font-semibold">CCC</span>
             </p>
-            <div className="relative inline-block">
-              <img
-                src={ceo}
-                alt="Abhishek"
-                className="w-24 h-24 lg:w-32 lg:h-32 rounded-full mx-auto mb-6 border-4 border-n-6 object-cover"
-              />
-            </div>
 
             <div className="max-w-3xl mx-auto">
               <p className="body-2 text-n-4 mb-6">

@@ -48,7 +48,7 @@ export const navigation = [
   {
     id: "1",
     title: "How It Works",
-    url: "#how-to-use",
+    url: "#roadmap",
   },
   {
     id: "2",
@@ -59,18 +59,6 @@ export const navigation = [
     id: "3",
     title: "About Creator",
     url: "#about",
-  },
-  {
-    id: "4",
-    title: "Pricing",
-    url: "#pricing",
-  },
-  {
-    id: "4",
-    title: "Source Code",
-    url: links.sourceCode,
-    onlyMobile: true,
-    external: true,
   },
 ];
 
@@ -149,8 +137,8 @@ export const roadmap = [
   },
   {
     id: "2",
-    title: "Customize & Deploy",
-    text: "Fine-tune your component through our intuitive interface and deploy instantly to your WordPress site.",
+    title: "Customize & Publish",
+    text: "Fine-tune your component through our intuitive interface and publish instantly to your WordPress site.",
     points: [
       {
         title: "Visual customization",
@@ -183,7 +171,7 @@ export const roadmap = [
         title: "Import-Export to AnyWhere Globally",
       },
     ],
-    imageUrl: roadmap4,
+    imageUrl: roadmap2,
     colorful: true,
   },
 ];

@@ -55,21 +55,14 @@ const Comparison = () => {
       pods: true,
     },
     {
-      feature: "Developer API",
-      ccc: true,
-      acf: true,
-      metabox: true,
-      pods: true,
-    },
-    {
-      feature: "Multi-Instance Support",
+      feature: "Advanced Features For Simple Fields",
       ccc: true,
       acf: false,
       metabox: false,
       pods: false,
     },
     {
-      feature: "Zero Coding Required",
+      feature: "Metabox Support For Single Post Types",
       ccc: true,
       acf: false,
       metabox: false,
@@ -257,10 +250,7 @@ const Comparison = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button className="hidden lg:flex" href="" external>
-                    Lets Started Free
-                  </Button>
-                  <Button className="hidden lg:flex" href="" external white>
-                     View Documentation
+                    Lets Get Started
                   </Button>
                 </div>
               </div>
