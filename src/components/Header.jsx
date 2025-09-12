@@ -62,16 +62,20 @@ const Header = () => {
       <div className="flex items-center px-5 lg:px-7.5 xl:px-10 max-lg:py-4">
         <a 
           className="block lg:w-[12rem] w-[10rem] xl:mr-8" 
-          href={isOnHomePage ? "#hero" : "/"}
+          href="#"
           onClick={(e) => {
-            if (!isOnHomePage) {
-              e.preventDefault();
+            e.preventDefault();
+            if (isOnHomePage) {
+              // If on home page, scroll to top
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+              // If on other pages, navigate to home page
               navigate('/');
             }
           }}
         >
           <img
-            className="w-full lg:h-[150px] h-[120px] object-contain"
+            className="w-full lg:h-[125px] h-[120px] object-contain"
             src={Websitelogo}
             alt="Custom Craft Components"
           />
@@ -183,7 +187,7 @@ const Header = () => {
             <>
               {/* Only show Register button if not on register page */}
               {!isOnRegisterPage && (
-                <Button white
+                <Button 
                   className="hidden lg:flex" 
                   onClick={isOnHomePage ? openRegisterModal : () => window.location.href = '/register'}
                   

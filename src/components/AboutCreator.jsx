@@ -63,7 +63,7 @@ const AboutCreator = () => {
                   with CCC
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button className=" flex" href="https://forms.gle/xhHv7AQymRNk5jmg6" external>
+                  <Button className=" flex" href="/pricing">
                     Lets Get Started
                   </Button>
                 </div>
