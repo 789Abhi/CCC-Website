@@ -75,21 +75,32 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (userData) => {
+  const register = async (firstName, lastName, email, password) => {
     try {
-      const response = await axios.post('/auth/register', userData);
+      const response = await axios.post('/auth/register', {
+        firstName,
+        lastName,
+        email,
+        password
+      });
       
       if (response.data.success) {
-        const { token: newToken, user: userData } = response.data;
-        localStorage.setItem('token', newToken);
-        setToken(newToken);
-        setUser(userData);
-        return { success: true, user: userData };
+        // Don't auto-login after registration, just return success
+        return { success: true, message: 'Registration successful! Please log in to continue.' };
       } else {
         return { success: false, message: response.data.message };
       }
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed';
+      let message = 'Registration failed';
+      
+      if (error.response?.data?.message) {
+        message = error.response.data.message;
+      } else if (error.response?.status === 400) {
+        message = 'Please check your information and try again';
+      } else if (error.response?.status === 409) {
+        message = 'An account with this email already exists. Please log in instead.';
+      }
+      
       return { success: false, message };
     }
   };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useModal } from '../contexts/ModalContext';
 import Button from '../components/Button';
 import Header from '../components/Header';
 
@@ -14,7 +15,10 @@ const RegisterPage = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   const { register } = useAuth();
+  const { showSuccess, openLoginModal } = useModal();
+  const navigate = useNavigate();
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -33,6 +37,7 @@ const RegisterPage = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setSuccess(false);
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
@@ -41,10 +46,27 @@ const RegisterPage = () => {
       return;
     }
 
+    // Validate password length
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      await register(formData.firstName, formData.lastName, formData.email, formData.password);
-      // Redirect to dashboard or home after successful registration
-      window.location.href = '/';
+      const result = await register(formData.firstName, formData.lastName, formData.email, formData.password);
+      
+      if (result.success) {
+        setSuccess(true);
+        showSuccess('🎉 Registration successful! Please log in to continue.');
+        
+        // Auto-redirect to login page after 2 seconds
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        setError(result.message);
+      }
     } catch (err) {
       setError(err.message || 'Registration failed');
     } finally {
@@ -175,6 +197,15 @@ const RegisterPage = () => {
               {error && (
                 <div className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-lg p-3">
                   {error}
+                </div>
+              )}
+
+              {success && (
+                <div className="text-green-400 text-sm bg-green-400/10 border border-green-400/20 rounded-lg p-3 flex items-center">
+                  <svg className="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Registration successful! Redirecting to login page...
                 </div>
               )}
 

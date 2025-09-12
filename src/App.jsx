@@ -12,6 +12,7 @@ import Services from "./components/Services";
 import Comparison from "./components/Comparison";
 import AboutCreator from "./components/AboutCreator";
 import ModalContainer from "./components/ModalContainer";
+import SuccessMessage from "./components/SuccessMessage";
 import HomePricing from "./components/HomePricing";
 
 // Auth Components
@@ -70,20 +71,37 @@ const App = () => {
           </div>
           <ButtonGradient />
           <ModalContainer />
+          <SuccessMessage />
         </>
       } />
       
       {/* Auth Routes */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/login" element={
+        <>
+          <LoginPage />
+          <SuccessMessage />
+        </>
+      } />
+      <Route path="/register" element={
+        <>
+          <RegisterPage />
+          <SuccessMessage />
+        </>
+      } />
       
       {/* Protected Routes */}
       <Route path="/dashboard" element={
         <ProtectedRoute>
           <UserDashboard />
+          <SuccessMessage />
         </ProtectedRoute>
       } />
-      <Route path="/pricing" element={<PricingPage />} />
+      <Route path="/pricing" element={
+        <>
+          <PricingPage />
+          <SuccessMessage />
+        </>
+      } />
     </Routes>
   );
 };

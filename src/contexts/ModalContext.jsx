@@ -14,6 +14,8 @@ export const ModalProvider = ({ children }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const openLoginModal = () => {
     setShowLoginModal(true);
@@ -43,16 +45,34 @@ export const ModalProvider = ({ children }) => {
     setShowLoginModal(true);
   };
 
+  const showSuccess = (message) => {
+    setSuccessMessage(message);
+    setShowSuccessMessage(true);
+    setTimeout(() => {
+      setShowSuccessMessage(false);
+      setSuccessMessage('');
+    }, 3000);
+  };
+
+  const closeSuccessMessage = () => {
+    setShowSuccessMessage(false);
+    setSuccessMessage('');
+  };
+
   const value = {
     showLoginModal,
     showRegisterModal,
     showUserModal,
+    successMessage,
+    showSuccessMessage,
     openLoginModal,
     openRegisterModal,
     openUserModal,
     closeAllModals,
     switchToRegister,
     switchToLogin,
+    showSuccess,
+    closeSuccessMessage,
     setShowLoginModal,
     setShowRegisterModal,
     setShowUserModal,
