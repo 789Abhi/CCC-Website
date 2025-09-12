@@ -106,7 +106,7 @@ const UserDashboard = () => {
       <Header />
 
       {/* Main Content */}
-      <div className="relative z-10 pt-[5.25rem] pb-20">
+      <div className="relative z-10 py-[200px]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Welcome Section */}
           <div className="text-center mb-12">

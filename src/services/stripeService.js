@@ -6,11 +6,12 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://custom-craft-compo
 
 export const stripeService = {
   // Create a payment session
-  async createCheckoutSession(plan, userId) {
+  async createCheckoutSession(plan, userId, isYearly = false) {
     try {
       const response = await axios.post(`${API_BASE_URL}/stripe/create-checkout-session`, {
         plan,
         userId,
+        isYearly,
         successUrl: `${window.location.origin}/dashboard?payment=success`,
         cancelUrl: `${window.location.origin}/pricing?payment=cancelled`
       });

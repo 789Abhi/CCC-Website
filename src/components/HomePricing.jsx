@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { stripeService } from '../services/stripeService';
 
 const HomePricing = () => {
-  const [isYearly, setIsYearly] = useState(false);
+  const [isYearly, setIsYearly] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ const HomePricing = () => {
 
     try {
       const plan = planName.toLowerCase().split(' ')[0];
-      const sessionId = await stripeService.createCheckoutSession(plan, user.id);
+      const sessionId = await stripeService.createCheckoutSession(plan, user.id, isYearly);
       await stripeService.redirectToCheckout(sessionId);
     } catch (error) {
       console.error('Payment error:', error);

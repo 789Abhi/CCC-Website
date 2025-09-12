@@ -122,7 +122,7 @@ const Header = () => {
               {user ? (
                 <button
                   onClick={() => {
-                    openUserModal();
+                    navigate('/dashboard');
                     handleClick();
                   }}
                   className="px-8 py-4 bg-color-1 text-n-8 rounded-lg font-semibold transition-colors hover:bg-color-1/80"
@@ -174,7 +174,7 @@ const Header = () => {
           {user ? (
             <Button 
               className="hidden lg:flex" 
-              onClick={openUserModal}
+              onClick={() => navigate('/dashboard')}
               white
             >
               {user.firstName} {user.lastName}
@@ -183,7 +183,7 @@ const Header = () => {
             <>
               {/* Only show Register button if not on register page */}
               {!isOnRegisterPage && (
-                <Button 
+                <Button white
                   className="hidden lg:flex" 
                   onClick={isOnHomePage ? openRegisterModal : () => window.location.href = '/register'}
                   
