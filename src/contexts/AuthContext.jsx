@@ -77,12 +77,16 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (firstName, lastName, email, password) => {
     try {
+      console.log('📝 Frontend registration attempt:', { firstName, lastName, email, passwordLength: password.length });
+      
       const response = await axios.post('/auth/register', {
         firstName,
         lastName,
         email,
         password
       });
+      
+      console.log('📝 Registration response:', response.data);
       
       if (response.data.success) {
         // Don't auto-login after registration, just return success
@@ -91,6 +95,9 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: response.data.message };
       }
     } catch (error) {
+      console.error('❌ Frontend registration error:', error);
+      console.error('❌ Error response:', error.response?.data);
+      
       let message = 'Registration failed';
       
       if (error.response?.data?.message) {
