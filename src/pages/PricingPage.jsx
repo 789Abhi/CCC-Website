@@ -1,11 +1,30 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import Header from '../components/Header';
-import PaymentButton from '../components/payment/PaymentButton';
+import { useAuth } from '../contexts/AuthContext';
+import { stripeService } from '../services/stripeService';
 
 const PricingPage = () => {
   const [isYearly, setIsYearly] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handlePayment = async (planName) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const plan = planName.toLowerCase().split(' ')[0];
+      const sessionId = await stripeService.createCheckoutSession(plan, user.id);
+      await stripeService.redirectToCheckout(sessionId);
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Payment failed. Please try again.');
+    }
+  };
   const plans = [
     {
       name: 'Basic / Personal',
@@ -184,13 +203,12 @@ const PricingPage = () => {
                     {plan.buttonText}
                   </Button>
                 ) : (
-                  <PaymentButton
-                    plan={plan.name.toLowerCase().split(' ')[0]}
-                    price={isYearly ? plan.yearlyPrice : plan.monthlyPrice}
+                  <Button white
                     className={`w-full ${plan.buttonStyle}`}
+                    onClick={() => handlePayment(plan.name)}
                   >
                     {plan.buttonText}
-                  </PaymentButton>
+                  </Button>
                 )}
               </div>
             ))}
