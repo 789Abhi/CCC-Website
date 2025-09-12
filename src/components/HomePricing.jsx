@@ -72,7 +72,7 @@ const HomePricing = () => {
         'All Pro Features Included'
       ],
       popular: false,
-      buttonText: 'Contact Sales',
+      buttonText: 'Get Started',
       buttonStyle: 'white'
     }
   ];
@@ -191,21 +191,12 @@ const HomePricing = () => {
                 </ul>
 
                 {/* CTA Button */}
-                {plan.name === 'Max / Agency' ? (
-                  <Button
-                    className={`w-full ${plan.buttonStyle}`}
-                    href="mailto:sales@customcraftcomponents.com"
-                  >
-                    {plan.buttonText}
-                  </Button>
-                ) : (
-                  <Button
-                    className={`w-full ${plan.buttonStyle}`}
-                    onClick={() => handlePayment(plan.name)}
-                  >
-                    {plan.buttonText}
-                  </Button>
-                )}
+                <Button
+                  className={`w-full ${plan.buttonStyle}`}
+                  onClick={() => handlePayment(plan.name)}
+                >
+                  {plan.buttonText}
+                </Button>
               </div>
             ))}
           </div>

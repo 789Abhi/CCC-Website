@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Button from '../components/Button';
@@ -12,6 +12,11 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const { login } = useAuth();
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -63,7 +68,7 @@ const LoginPage = () => {
       <Header />
 
       {/* Main Content */}
-      <div className="relative z-10 flex items-center justify-center  py-[200px] px-4">
+      <div className="relative z-10 flex items-center justify-center py-[200px] px-4">
         <div className="w-full max-w-md">
           {/* Logo/Brand */}
           <div className="text-center mb-8">

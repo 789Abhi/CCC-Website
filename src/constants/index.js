@@ -57,6 +57,11 @@ export const navigation = [
   },
   {
     id: "3",
+    title: "Pricing",
+    url: "#pricing",
+  },
+  {
+    id: "4",
     title: "About Creator",
     url: "#about",
   },

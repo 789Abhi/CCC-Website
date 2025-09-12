@@ -12,6 +12,9 @@ const UserDashboard = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0);
+    
     if (user && user.id) {
       fetchLicenses();
     }
