@@ -29,7 +29,7 @@ const Benefits = () => {
           }
         />
 
-        <div className="flex flex-wrap gap-10 mb-10">
+        <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-10 mb-10">
           {benefits.map((benefit) => (
             <div
               className="block relative p-0.5 bg-no-repeat bg-[length:100%_100%] md:max-w-[24rem]"

@@ -4,14 +4,16 @@ import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
 
 const UserDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const [licenses, setLicenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchLicenses();
-  }, []);
+    if (user && user.id) {
+      fetchLicenses();
+    }
+  }, [user]);
 
   const fetchLicenses = async () => {
     try {
@@ -68,6 +70,18 @@ const UserDashboard = () => {
     }
   };
 
+  // Show loading state while auth is loading or user is not available
+  if (authLoading || !user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
@@ -76,7 +90,7 @@ const UserDashboard = () => {
           <div className="flex justify-between items-center py-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Welcome, {user.firstName}! 👋
+                Welcome, {user.firstName || user.email}! 👋
               </h1>
               <p className="text-gray-600">
                 Manage your Custom Craft Component licenses
@@ -118,15 +132,24 @@ const UserDashboard = () => {
               <p className="mt-1 text-sm text-gray-900">{user.email}</p>
             </div>
             <div>
+              <label className="block text-sm font-medium text-gray-700">Name</label>
+              <p className="mt-1 text-sm text-gray-900">
+                {user.firstName && user.lastName 
+                  ? `${user.firstName} ${user.lastName}` 
+                  : user.firstName || 'Not provided'
+                }
+              </p>
+            </div>
+            <div>
               <label className="block text-sm font-medium text-gray-700">Subscription Plan</label>
-              <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getPlanColor(user.subscription.plan)}`}>
-                {user.subscription.plan.toUpperCase()}
+              <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getPlanColor(user.subscription?.plan || 'basic')}`}>
+                {(user.subscription?.plan || 'basic').toUpperCase()}
               </span>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Account Status</label>
-              <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(user.subscription.status)}`}>
-                {user.subscription.status.toUpperCase()}
+              <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(user.subscription?.status || 'active')}`}>
+                {(user.subscription?.status || 'active').toUpperCase()}
               </span>
             </div>
             <div>
