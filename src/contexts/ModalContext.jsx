@@ -46,9 +46,12 @@ export const ModalProvider = ({ children }) => {
   };
 
   const showSuccess = (message) => {
+    console.log('showSuccess called with:', message);
     setSuccessMessage(message);
     setShowSuccessMessage(true);
+    console.log('Success message state set to true');
     setTimeout(() => {
+      console.log('Auto-hiding success message');
       setShowSuccessMessage(false);
       setSuccessMessage('');
     }, 3000);

@@ -4,11 +4,24 @@ import { useModal } from '../contexts/ModalContext';
 const SuccessMessage = () => {
   const { showSuccessMessage, successMessage, closeSuccessMessage } = useModal();
 
+  // Debug logging
+  console.log('SuccessMessage render:', { showSuccessMessage, successMessage });
+
   if (!showSuccessMessage) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-50 animate-slide-in">
-      <div className="bg-green-500/90 backdrop-blur-sm border border-green-400/30 rounded-xl p-4 shadow-2xl max-w-sm">
+    <div 
+      className="fixed top-4 right-4 z-[60] animate-slide-in max-w-sm w-full px-4 sm:px-0 sm:max-w-sm"
+      style={{ 
+        position: 'fixed',
+        top: '16px',
+        right: '16px',
+        zIndex: 60,
+        maxWidth: '384px',
+        width: '100%'
+      }}
+    >
+      <div className="bg-green-500/90 backdrop-blur-sm border border-green-400/30 rounded-xl p-4 shadow-2xl">
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <svg className="w-6 h-6 text-green-100" fill="currentColor" viewBox="0 0 20 20">

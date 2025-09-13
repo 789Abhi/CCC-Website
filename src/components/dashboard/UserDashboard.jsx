@@ -50,6 +50,7 @@ const UserDashboard = () => {
 
   const getPlanColor = (plan) => {
     switch (plan) {
+      case 'free': return 'text-green-400 bg-green-500/20 border border-green-500/30';
       case 'basic': return 'text-blue-400 bg-blue-500/20 border border-blue-500/30';
       case 'pro': return 'text-purple-400 bg-purple-500/20 border border-purple-500/30';
       case 'max': return 'text-yellow-400 bg-yellow-500/20 border border-yellow-500/30';
@@ -176,7 +177,12 @@ const UserDashboard = () => {
           <div className="bg-n-8/80 backdrop-blur-sm border border-n-6 rounded-2xl shadow-2xl">
             <div className="px-8 py-6 border-b border-n-6">
               <h2 className="text-2xl font-semibold text-n-1">Your Licenses</h2>
-              <p className="text-n-2 mt-2">Your license keys are automatically generated after successful payment</p>
+              <p className="text-n-2 mt-2">
+                {licenses.length === 0 
+                  ? "Licenses are generated when you purchase a paid plan"
+                  : "Your license keys for paid plans"
+                }
+              </p>
             </div>
             
             {loading ? (
@@ -186,9 +192,18 @@ const UserDashboard = () => {
               </div>
             ) : licenses.length === 0 ? (
               <div className="p-8 text-center">
-                <div className="text-6xl mb-4">🔑</div>
-                <p className="text-n-2 text-lg mb-4">No licenses found yet</p>
-                <p className="text-n-3">Your license will be automatically generated after successful payment</p>
+                <div className="text-6xl mb-4">🎉</div>
+                <p className="text-n-2 text-lg mb-4">Welcome to Custom Craft Components!</p>
+                <p className="text-n-3 mb-6">You're currently on the FREE plan and can access basic features.</p>
+                <div className="bg-n-7/50 rounded-lg p-4 mb-6">
+                  <h3 className="text-n-1 font-semibold mb-2">Free Plan Features:</h3>
+                  <ul className="text-n-2 text-sm space-y-1">
+                    <li>• Access to basic component templates</li>
+                    <li>• Manual component creation</li>
+                    <li>• Community support</li>
+                  </ul>
+                </div>
+                <p className="text-n-3 text-sm">Upgrade to a paid plan to get AI-powered component generation and premium features!</p>
               </div>
             ) : (
               <div className="overflow-x-auto">

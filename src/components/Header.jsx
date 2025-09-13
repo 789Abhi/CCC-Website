@@ -187,7 +187,7 @@ const Header = () => {
             <>
               {/* Only show Register button if not on register page */}
               {!isOnRegisterPage && (
-                <Button 
+                <Button white
                   className="hidden lg:flex" 
                   onClick={isOnHomePage ? openRegisterModal : () => window.location.href = '/register'}
                   

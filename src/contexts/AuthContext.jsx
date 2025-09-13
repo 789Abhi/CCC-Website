@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [rememberMe, setRememberMe] = useState(localStorage.getItem('rememberMe') === 'true');
 
   // Set up axios interceptor for token
   useEffect(() => {
@@ -56,15 +57,25 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, [token]);
 
-  const login = async (email, password) => {
+  const login = async (email, password, rememberMeFlag = false) => {
     try {
-      const response = await axios.post('/auth/login', { email, password });
+      const response = await axios.post('/auth/login', { 
+        email, 
+        password, 
+        rememberMe: rememberMeFlag 
+      });
       
       if (response.data.success) {
         const { token: newToken, user: userData } = response.data;
+        
+        // Store token and remember me preference
         localStorage.setItem('token', newToken);
+        localStorage.setItem('rememberMe', rememberMeFlag.toString());
+        
         setToken(newToken);
         setUser(userData);
+        setRememberMe(rememberMeFlag);
+        
         return { success: true, user: userData };
       } else {
         return { success: false, message: response.data.message };
@@ -114,8 +125,10 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('rememberMe');
     setToken(null);
     setUser(null);
+    setRememberMe(false);
   };
 
   const value = {
@@ -124,6 +137,8 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     loading,
+    rememberMe,
+    setRememberMe,
     isAuthenticated: !!user
   };
 
