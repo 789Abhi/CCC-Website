@@ -1,23 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { stripeService } from '../services/stripeService';
 import { useAuth } from '../contexts/AuthContext';
 
+// Stripe public key
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
 const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
+  const stripe = useStripe();
+  const elements = useElements();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    
+    if (!stripe || !elements) {
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      // Create checkout session first
-      const sessionId = await stripeService.createCheckoutSession(plan.id, user.id, isYearly);
-      
-      // Redirect to Stripe Checkout
-      await stripeService.redirectToCheckout(sessionId);
+      // Create payment intent
+      const response = await fetch('/api/stripe/create-payment-intent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          plan: plan.id,
+          isYearly: isYearly,
+          userId: user.id
+        })
+      });
+
+      const { clientSecret } = await response.json();
+
+      // Confirm payment with Stripe
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+          billing_details: {
+            name: `${user.firstName} ${user.lastName}`,
+            email: user.email,
+          },
+        }
+      });
+
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+      } else if (paymentIntent.status === 'succeeded') {
+        setPaymentSuccess(true);
+        setLoading(false);
+        // Show success popup
+        setTimeout(() => {
+          onSuccess();
+        }, 1000);
+      }
       
     } catch (err) {
       setError('Payment failed. Please try again.');
@@ -25,12 +73,61 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
     }
   };
 
+  if (paymentSuccess) {
+    return (
+      <div className="space-y-6">
+        <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-6 text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-white mb-2">Payment Successful!</h3>
+          <p className="text-green-300">Processing your subscription...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="bg-n-7/50 backdrop-blur-sm border border-n-6 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Secure Payment</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">Payment Details</h3>
         
         <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-n-3 mb-2">
+              Card Information
+            </label>
+            <div className="bg-n-8 border border-n-6 rounded-lg p-4 transition-all duration-300 focus-within:border-color-1 focus-within:ring-1 focus-within:ring-color-1/20">
+              <CardElement
+                options={{
+                  style: {
+                    base: {
+                      fontSize: '16px',
+                      color: '#ffffff',
+                      fontFamily: 'Inter, system-ui, sans-serif',
+                      '::placeholder': {
+                        color: '#9ca3af',
+                      },
+                      padding: '12px',
+                    },
+                    invalid: {
+                      color: '#ef4444',
+                      iconColor: '#ef4444',
+                    },
+                    complete: {
+                      color: '#10b981',
+                      iconColor: '#10b981',
+                    },
+                  },
+                  hidePostalCode: true,
+                }}
+              />
+            </div>
+          </div>
+          
+          {/* Security Badge */}
           <div className="bg-n-8 border border-n-6 rounded-lg p-4">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gradient-to-r from-color-1 to-color-2 rounded-full flex items-center justify-center">
@@ -49,25 +146,30 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
 
       {error && (
         <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-          <p className="text-red-400 text-sm">{error}</p>
+          <div className="flex items-center space-x-2">
+            <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-red-400 text-sm">{error}</p>
+          </div>
         </div>
       )}
 
       <button
-        onClick={handleSubmit}
-        disabled={loading}
+        type="submit"
+        disabled={!stripe || loading}
         className="w-full bg-gradient-to-r from-color-1 to-color-2 hover:from-color-1/90 hover:to-color-2/90 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
       >
         {loading ? (
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-            Creating secure checkout...
+            Processing Payment...
           </div>
         ) : (
           `Pay ${isYearly ? plan.yearlyPrice : plan.monthlyPrice} ${isYearly ? '/year' : '/month'}`
         )}
       </button>
-    </div>
+    </form>
   );
 };
 
@@ -344,11 +446,13 @@ const CheckoutPage = () => {
 
             {/* Payment Form */}
             <div className="bg-n-7/50 backdrop-blur-sm border border-n-6 rounded-xl p-6">
-              <CheckoutForm 
-                plan={plan} 
-                isYearly={isYearly}
-                onSuccess={() => setShowSuccessPopup(true)}
-              />
+              <Elements stripe={stripePromise}>
+                <CheckoutForm 
+                  plan={plan} 
+                  isYearly={isYearly}
+                  onSuccess={() => setShowSuccessPopup(true)}
+                />
+              </Elements>
             </div>
           </div>
 
