@@ -15,9 +15,15 @@ const PricingPage = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const handlePayment = async (planName) => {
+  const handlePayment = async (planName, buttonConfig) => {
     if (!user) {
       navigate('/login');
+      return;
+    }
+
+    // If it's the Active button, navigate to dashboard
+    if (buttonConfig.text === 'Active') {
+      navigate('/dashboard');
       return;
     }
 
@@ -40,19 +46,22 @@ const PricingPage = () => {
       return {
         text: 'Active',
         style: 'active',
-        disabled: true
+        disabled: false,
+        show: true
       };
     } else if (currentPlan === 'free' || canUpgrade(currentPlan, planId)) {
       return {
         text: currentPlan === 'free' ? 'Get Started' : 'Upgrade',
         style: 'white',
-        disabled: false
+        disabled: false,
+        show: true
       };
     } else {
       return {
-        text: 'Not Available',
-        style: 'disabled',
-        disabled: true
+        text: '',
+        style: '',
+        disabled: true,
+        show: false // Don't show button for invalid plans
       };
     }
   };
@@ -67,6 +76,23 @@ const PricingPage = () => {
     };
     return upgradePaths[currentPlan]?.includes(targetPlan) || false;
   };
+
+  // Determine plan tag (Most Popular, Subscribed, or none)
+  const getPlanTag = (planId) => {
+    if (currentPlan === planId) {
+      return {
+        text: 'Subscribed',
+        style: 'subscribed'
+      };
+    } else if (planId === 'pro' && currentPlan === 'free') {
+      return {
+        text: 'Most Popular',
+        style: 'popular'
+      };
+    } else {
+      return null; // No tag
+    }
+  };
   const plans = [
     {
       id: 'basic',
@@ -80,8 +106,7 @@ const PricingPage = () => {
         'Unlimited Manual Fields',
         '50 component generations Through AI',
         'Basic Support'
-      ],
-      popular: false
+      ]
     },
     {
       id: 'pro',
@@ -96,8 +121,7 @@ const PricingPage = () => {
         '800 component generations Through AI',
         'Priority Support',
         'All Pro Features Included'
-      ],
-      popular: true
+      ]
     },
     {
       id: 'max',
@@ -112,8 +136,7 @@ const PricingPage = () => {
         '3500 component generations Through AI',
         'Premium Support',
         'All Pro Features Included'
-      ],
-      popular: false
+      ]
     }
   ];
 
@@ -184,19 +207,28 @@ const PricingPage = () => {
               <div
                 key={plan.name}
                 className={`relative bg-n-8/80 backdrop-blur-sm border rounded-2xl p-8 shadow-2xl transition-all duration-300 ${
-                  plan.popular 
+                  getPlanTag(plan.id)?.style === 'popular'
                     ? 'border-color-1 ring-2 ring-color-1/20' 
                     : 'border-n-6'
                 }`}
               >
-                {/* Popular Badge */}
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <div className="bg-color-1 text-n-8 px-4 py-1 rounded-full text-sm font-semibold">
-                      Most Popular
+                {/* Plan Tag (Most Popular or Subscribed) */}
+                {(() => {
+                  const tag = getPlanTag(plan.id);
+                  if (!tag) return null;
+                  
+                  return (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <div className={`px-4 py-1 rounded-full text-sm font-semibold ${
+                        tag.style === 'popular' 
+                          ? 'bg-color-1 text-n-8' 
+                          : 'bg-green-500 text-white'
+                      }`}>
+                        {tag.text}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {/* Plan Header */}
                 <div className="text-center mb-8">
@@ -236,17 +268,21 @@ const PricingPage = () => {
                 {/* CTA Button */}
                 {(() => {
                   const buttonConfig = getButtonConfig(plan.id);
+                  
+                  // Only show button if show is true
+                  if (!buttonConfig.show) {
+                    return null;
+                  }
+                  
                   return (
                     <Button 
                       white={buttonConfig.style === 'white'}
                       className={`w-full ${
                         buttonConfig.style === 'active' 
-                          ? 'bg-green-500 hover:bg-green-600 text-white' 
-                          : buttonConfig.style === 'disabled'
-                          ? 'bg-gray-500 cursor-not-allowed text-gray-300'
+                          ? 'bg-green-500 hover:bg-green-600 text-white cursor-pointer' 
                           : ''
                       }`}
-                      onClick={() => !buttonConfig.disabled && handlePayment(plan.name)}
+                      onClick={() => handlePayment(plan.name, buttonConfig)}
                       disabled={buttonConfig.disabled}
                     >
                       {buttonConfig.text}
