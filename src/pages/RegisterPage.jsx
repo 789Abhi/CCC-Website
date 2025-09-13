@@ -60,11 +60,11 @@ const RegisterPage = () => {
       
       if (result.success) {
         setSuccess(true);
-        showSuccess('🎉 Registration successful! Please log in to continue.');
+        showSuccess('🎉 Registration successful! Welcome to Custom Craft Components!');
         
-        // Auto-redirect to login page after 2 seconds
+        // Auto-redirect to dashboard after 2 seconds since user is now logged in
         setTimeout(() => {
-          navigate('/login');
+          navigate('/dashboard');
         }, 2000);
       } else {
         setError(result.message);
