@@ -27,14 +27,9 @@ const PricingPage = () => {
       return;
     }
 
-    try {
-      const plan = planName.toLowerCase().split(' ')[0];
-      const sessionId = await stripeService.createCheckoutSession(plan, user.id, isYearly);
-      await stripeService.redirectToCheckout(sessionId);
-    } catch (error) {
-      console.error('Payment error:', error);
-      alert('Payment failed. Please try again.');
-    }
+    // Navigate to checkout page instead of direct Stripe redirect
+    const plan = planName.toLowerCase().split(' ')[0];
+    navigate(`/checkout?plan=${plan}&yearly=${isYearly}`);
   };
 
   // Get user's current plan

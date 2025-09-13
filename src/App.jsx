@@ -25,6 +25,7 @@ import PricingPlans from "./components/pricing/PricingPlans";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import PricingPage from "./pages/PricingPage";
+import CheckoutPage from "./pages/CheckoutPage";
 import PricingList from './components/PricingList';
 import { useAuth } from './contexts/AuthContext';
 
@@ -101,6 +102,11 @@ const App = () => {
           <PricingPage />
           <SuccessMessage />
         </>
+      } />
+      <Route path="/checkout" element={
+        <ProtectedRoute>
+          <CheckoutPage />
+        </ProtectedRoute>
       } />
     </Routes>
   );
