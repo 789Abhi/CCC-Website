@@ -68,6 +68,28 @@ const UserDashboard = () => {
     }
   };
 
+  const testPaymentProcessing = async () => {
+    try {
+      setProcessingPayment(true);
+      console.log('🧪 Testing payment processing...');
+      
+      const result = await stripeService.testPayment(user.id, 'basic');
+      
+      if (result.success) {
+        console.log('✅ Test payment processed successfully');
+        // Refresh user data and licenses
+        window.location.reload(); // Simple refresh to get updated user data
+      } else {
+        setError('Failed to process test payment: ' + result.message);
+      }
+    } catch (error) {
+      console.error('❌ Error processing test payment:', error);
+      setError('Failed to process test payment. Please contact support.');
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
@@ -265,6 +287,14 @@ const UserDashboard = () => {
                   className="bg-gradient-to-r from-color-1 to-color-2 text-n-8 px-8 py-3 rounded-lg hover:from-color-1/90 hover:to-color-2/90 transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   🚀 Upgrade Your Plan
+                </button>
+                
+                {/* Test Payment Button (for testing only) */}
+                <button
+                  onClick={testPaymentProcessing}
+                  className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 font-semibold text-sm shadow-lg hover:shadow-xl transform hover:scale-105 mt-4"
+                >
+                  🧪 Test Payment Processing
                 </button>
               </div>
             ) : (
