@@ -47,6 +47,8 @@ export const AuthProvider = ({ children }) => {
           }
         } catch (error) {
           console.error('Auth check failed:', error);
+          console.error('Auth check error details:', error.response?.data);
+          console.error('Auth check error status:', error.response?.status);
           localStorage.removeItem('token');
           setToken(null);
         }
@@ -100,8 +102,17 @@ export const AuthProvider = ({ children }) => {
       console.log('📝 Registration response:', response.data);
       
       if (response.data.success) {
-        // Don't auto-login after registration, just return success
-        return { success: true, message: 'Registration successful! Please log in to continue.' };
+        const { token: newToken, user: userData } = response.data;
+        
+        // Store token and user data after successful registration
+        localStorage.setItem('token', newToken);
+        localStorage.setItem('rememberMe', 'false'); // Default to false for new registrations
+        
+        setToken(newToken);
+        setUser(userData);
+        setRememberMe(false);
+        
+        return { success: true, message: 'Registration successful!', user: userData };
       } else {
         return { success: false, message: response.data.message };
       }
