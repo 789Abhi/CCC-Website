@@ -24,8 +24,46 @@ const HomePricing = () => {
       alert('Payment failed. Please try again.');
     }
   };
+
+  // Get user's current plan
+  const currentPlan = user?.subscription?.plan || 'free';
+
+  // Determine button text and style based on current plan
+  const getButtonConfig = (planId) => {
+    if (currentPlan === planId) {
+      return {
+        text: 'Active',
+        style: 'active',
+        disabled: true
+      };
+    } else if (currentPlan === 'free' || canUpgrade(currentPlan, planId)) {
+      return {
+        text: currentPlan === 'free' ? 'Get Started' : 'Upgrade',
+        style: 'white',
+        disabled: false
+      };
+    } else {
+      return {
+        text: 'Not Available',
+        style: 'disabled',
+        disabled: true
+      };
+    }
+  };
+
+  // Check if user can upgrade to a plan
+  const canUpgrade = (currentPlan, targetPlan) => {
+    const upgradePaths = {
+      'free': ['basic', 'pro', 'max'],
+      'basic': ['pro', 'max'],
+      'pro': ['max'],
+      'max': []
+    };
+    return upgradePaths[currentPlan]?.includes(targetPlan) || false;
+  };
   const plans = [
     {
+      id: 'basic',
       name: 'Basic / Personal',
       monthlyPrice: '$3.25',
       yearlyPrice: '$39',
@@ -37,11 +75,10 @@ const HomePricing = () => {
         '50 component generations Through AI',
         'Basic Support'
       ],
-      popular: false,
-      buttonText: 'Get Started',
-      buttonStyle: 'white'
+      popular: false
     },
     {
+      id: 'pro',
       name: 'Pro / Freelancer',
       monthlyPrice: '$11.99',
       yearlyPrice: '$139',
@@ -54,11 +91,10 @@ const HomePricing = () => {
         'Priority Support',
         'All Pro Features Included'
       ],
-      popular: true,
-      buttonText: 'Most Popular',
-      buttonStyle: 'white'
+      popular: true
     },
     {
+      id: 'max',
       name: 'Max / Agency',
       monthlyPrice: '$19.99',
       yearlyPrice: '$239',
@@ -71,9 +107,7 @@ const HomePricing = () => {
         'Premium Support',
         'All Pro Features Included'
       ],
-      popular: false,
-      buttonText: 'Get Started',
-      buttonStyle: 'white'
+      popular: false
     }
   ];
 
@@ -191,12 +225,25 @@ const HomePricing = () => {
                 </ul>
 
                 {/* CTA Button */}
-                <Button
-                  className={`w-full ${plan.buttonStyle}`}
-                  onClick={() => handlePayment(plan.name)}
-                >
-                  {plan.buttonText}
-                </Button>
+                {(() => {
+                  const buttonConfig = getButtonConfig(plan.id);
+                  return (
+                    <Button 
+                      white={buttonConfig.style === 'white'}
+                      className={`w-full ${
+                        buttonConfig.style === 'active' 
+                          ? 'bg-green-500 hover:bg-green-600 text-white' 
+                          : buttonConfig.style === 'disabled'
+                          ? 'bg-gray-500 cursor-not-allowed text-gray-300'
+                          : ''
+                      }`}
+                      onClick={() => !buttonConfig.disabled && handlePayment(plan.name)}
+                      disabled={buttonConfig.disabled}
+                    >
+                      {buttonConfig.text}
+                    </Button>
+                  );
+                })()}
               </div>
             ))}
           </div>
