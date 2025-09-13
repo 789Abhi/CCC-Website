@@ -58,6 +58,21 @@ export const stripeService = {
     }
   },
 
+  // Manually process payment (for webhook fallback)
+  async processPayment(sessionId) {
+    try {
+      console.log('🔄 Manually processing payment for session:', sessionId);
+      const response = await axios.post(`${API_BASE_URL}/stripe/process-payment`, {
+        sessionId
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Error processing payment:', error);
+      throw error;
+    }
+  },
+
   // Get user's subscription status
   async getSubscriptionStatus(userId) {
     try {

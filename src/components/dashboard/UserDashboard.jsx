@@ -1,24 +1,36 @@
 // UserDashboard.jsx - User dashboard for public website
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { stripeService } from '../../services/stripeService';
 import Header from '../Header';
 import Footer from '../Footer';
 
 const UserDashboard = () => {
   const { user, logout, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [licenses, setLicenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
     
-    if (user && user.id) {
+    // Check if user returned from successful payment
+    const urlParams = new URLSearchParams(location.search);
+    const paymentStatus = urlParams.get('payment');
+    const sessionId = urlParams.get('session_id');
+    
+    if (paymentStatus === 'success' && sessionId && user) {
+      processPayment(sessionId);
+    } else if (user && user.id) {
       fetchLicenses();
     }
-  }, [user]);
+  }, [user, location]);
 
   const fetchLicenses = async () => {
     try {
@@ -31,6 +43,28 @@ const UserDashboard = () => {
       console.error('Error fetching licenses:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const processPayment = async (sessionId) => {
+    try {
+      setProcessingPayment(true);
+      console.log('🔄 Processing payment for session:', sessionId);
+      
+      const result = await stripeService.processPayment(sessionId);
+      
+      if (result.success) {
+        console.log('✅ Payment processed successfully');
+        // Refresh user data and licenses
+        window.location.reload(); // Simple refresh to get updated user data
+      } else {
+        setError('Failed to process payment: ' + result.message);
+      }
+    } catch (error) {
+      console.error('❌ Error processing payment:', error);
+      setError('Failed to process payment. Please contact support.');
+    } finally {
+      setProcessingPayment(false);
     }
   };
 
@@ -109,6 +143,18 @@ const UserDashboard = () => {
       {/* Header */}
       <Header />
 
+      {/* Payment Processing Indicator */}
+      {processingPayment && (
+        <div className="relative z-20 bg-gradient-to-r from-color-1 to-color-2 text-n-8 py-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-n-8 mr-3"></div>
+              <span className="font-semibold">Processing your payment and upgrading your account...</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <div className="relative z-10 py-[200px]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -162,7 +208,15 @@ const UserDashboard = () => {
                 <label className="block text-sm font-medium text-n-2 mb-2">Member Since</label>
                 <p className="text-n-1 font-medium">{formatDate(user.createdAt)}</p>
               </div>
-              <div className="flex items-end">
+              <div className="flex items-end gap-3">
+                {user.subscription?.plan === 'free' && (
+                  <button
+                    onClick={() => navigate('/pricing')}
+                    className="bg-gradient-to-r from-color-1 to-color-2 text-n-8 px-6 py-2 rounded-lg hover:from-color-1/90 hover:to-color-2/90 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
+                  >
+                    Upgrade Plan
+                  </button>
+                )}
                 <button
                   onClick={logout}
                   className="bg-color-1 text-n-8 px-6 py-2 rounded-lg hover:bg-color-1/80 transition-colors font-semibold"
@@ -203,7 +257,15 @@ const UserDashboard = () => {
                     <li>• Community support</li>
                   </ul>
                 </div>
-                <p className="text-n-3 text-sm">Upgrade to a paid plan to get AI-powered component generation and premium features!</p>
+                <p className="text-n-3 text-sm mb-6">Upgrade to a paid plan to get AI-powered component generation and premium features!</p>
+                
+                {/* Upgrade Plan Button */}
+                <button
+                  onClick={() => navigate('/pricing')}
+                  className="bg-gradient-to-r from-color-1 to-color-2 text-n-8 px-8 py-3 rounded-lg hover:from-color-1/90 hover:to-color-2/90 transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  🚀 Upgrade Your Plan
+                </button>
               </div>
             ) : (
               <div className="overflow-x-auto">
