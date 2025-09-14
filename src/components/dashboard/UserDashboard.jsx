@@ -8,7 +8,7 @@ import Header from '../Header';
 import Footer from '../Footer';
 
 const UserDashboard = () => {
-  const { user, logout, loading: authLoading } = useAuth();
+  const { user, logout, loading: authLoading, refreshUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [licenses, setLicenses] = useState([]);
@@ -55,8 +55,16 @@ const UserDashboard = () => {
       
       if (result.success) {
         console.log('✅ Payment processed successfully');
-        // Refresh user data and licenses
-        window.location.reload(); // Simple refresh to get updated user data
+        // Refresh user data and licenses instead of full page reload
+        try {
+          await refreshUser();
+          await fetchLicenses();
+          console.log('✅ User data and licenses refreshed');
+        } catch (refreshError) {
+          console.error('❌ Error refreshing data:', refreshError);
+          // Fallback to page reload if refresh fails
+          window.location.reload();
+        }
       } else {
         setError('Failed to process payment: ' + result.message);
       }

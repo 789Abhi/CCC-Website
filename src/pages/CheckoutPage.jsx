@@ -15,7 +15,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://custom-craft-compo
 const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
   const stripe = useStripe();
   const elements = useElements();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -109,6 +109,14 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
           
           if (processResponse.data.success) {
             console.log('✅ Payment processed successfully:', processResponse.data);
+            
+            // Refresh user data to get updated subscription
+            try {
+              await refreshUser();
+              console.log('✅ User data refreshed successfully');
+            } catch (refreshError) {
+              console.error('❌ Error refreshing user data:', refreshError);
+            }
           } else {
             console.error('❌ Payment processing failed:', processResponse.data.message);
           }

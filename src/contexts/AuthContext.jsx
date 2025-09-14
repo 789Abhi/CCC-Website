@@ -142,11 +142,28 @@ export const AuthProvider = ({ children }) => {
     setRememberMe(false);
   };
 
+  const refreshUser = async () => {
+    if (token) {
+      try {
+        const response = await axios.get('/auth/me');
+        if (response.data.success) {
+          setUser(response.data.user);
+          return { success: true, user: response.data.user };
+        }
+      } catch (error) {
+        console.error('Failed to refresh user data:', error);
+        return { success: false, message: 'Failed to refresh user data' };
+      }
+    }
+    return { success: false, message: 'No token available' };
+  };
+
   const value = {
     user,
     login,
     register,
     logout,
+    refreshUser,
     loading,
     rememberMe,
     setRememberMe,
