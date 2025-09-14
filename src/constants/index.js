@@ -60,11 +60,6 @@ export const navigation = [
     title: "Pricing",
     url: "#pricing",
   },
-  {
-    id: "4",
-    title: "About Creator",
-    url: "#about",
-  },
 ];
 
 export const heroIcons = [homeSmile, file02, searchMd, plusSquare];

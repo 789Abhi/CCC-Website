@@ -10,7 +10,7 @@ import Pricing from "./components/Pricing";
 import Roadmap from "./components/Roadmap";
 import Services from "./components/Services";
 import Comparison from "./components/Comparison";
-import AboutCreator from "./components/AboutCreator";
+import MeetAbhishekFloatingIcon from "./components/MeetAbhishekFloatingIcon";
 import ModalContainer from "./components/ModalContainer";
 import SuccessMessage from "./components/SuccessMessage";
 import HomePricing from "./components/HomePricing";
@@ -67,12 +67,12 @@ const App = () => {
             <Roadmap/>
             <Comparison />
             <HomePricing />
-            <AboutCreator />
             <Footer />
           </div>
           <ButtonGradient />
           <ModalContainer />
           <SuccessMessage />
+          <MeetAbhishekFloatingIcon />
         </>
       } />
       
