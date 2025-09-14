@@ -187,7 +187,7 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div className="flex flex-col gap-4 mb-4">
           <div>
             <label className="block text-sm font-medium text-n-3 mb-2">
               City *
