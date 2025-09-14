@@ -94,6 +94,29 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
       } else if (paymentIntent.status === 'succeeded') {
         setPaymentSuccess(true);
         setLoading(false);
+        
+        // Manually process the payment to save to database
+        try {
+          console.log('🔄 Processing payment intent:', paymentIntent.id);
+          const processResponse = await axios.post(`${API_BASE_URL}/stripe/process-payment-intent`, {
+            paymentIntentId: paymentIntent.id
+          }, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+          
+          if (processResponse.data.success) {
+            console.log('✅ Payment processed successfully:', processResponse.data);
+          } else {
+            console.error('❌ Payment processing failed:', processResponse.data.message);
+          }
+        } catch (processError) {
+          console.error('❌ Error processing payment:', processError);
+          // Don't show error to user as payment was successful
+        }
+        
         // Show success popup
         setTimeout(() => {
           onSuccess();
@@ -275,7 +298,6 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
                       '::placeholder': {
                         color: '#9ca3af',
                       },
-                      padding: '12px',
                     },
                     invalid: {
                       color: '#ef4444',
@@ -360,6 +382,14 @@ const PaymentSuccessPopup = ({ isOpen, onClose, plan }) => {
     navigate('/dashboard');
   };
 
+  const handleCloseAndNavigate = () => {
+    onClose();
+    // Navigate to dashboard after a short delay to ensure popup closes smoothly
+    setTimeout(() => {
+      navigate('/dashboard');
+    }, 300);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -385,7 +415,7 @@ const PaymentSuccessPopup = ({ isOpen, onClose, plan }) => {
             Payment Successful! 🎉
           </h2>
           <p className="text-n-3 mb-4">
-            Welcome to <span className="text-color-1 font-semibold">{plan.name}</span>
+            Welcome to <span className="text-color-1 font-semibold">{plan?.name || 'your new plan'}</span>
           </p>
           <div className="bg-n-7/50 backdrop-blur-sm border border-n-6 rounded-lg p-4">
             <p className="text-sm text-n-3">
@@ -397,7 +427,7 @@ const PaymentSuccessPopup = ({ isOpen, onClose, plan }) => {
         {/* Action Buttons */}
         <div className="space-y-3">
           <button
-            onClick={handleGoToDashboard}
+            onClick={handleCloseAndNavigate}
             className="w-full bg-gradient-to-r from-color-1 to-color-2 hover:from-color-1/90 hover:to-color-2/90 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
           >
             Go to Dashboard
@@ -615,7 +645,10 @@ const CheckoutPage = () => {
                 <CheckoutForm 
                   plan={plan} 
                   isYearly={isYearly}
-                  onSuccess={() => setShowSuccessPopup(true)}
+                  onSuccess={() => {
+                    setSelectedPlan(plan);
+                    setShowSuccessPopup(true);
+                  }}
                 />
               </Elements>
             </div>
