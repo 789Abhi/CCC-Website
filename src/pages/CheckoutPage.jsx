@@ -541,7 +541,7 @@ const CheckoutPage = () => {
 
       {/* Main Content */}
       <div className="relative z-10 py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Complete Your Purchase
