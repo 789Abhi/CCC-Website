@@ -4,9 +4,13 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { stripeService } from '../services/stripeService';
 import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
 
 // Stripe public key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+// API base URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://custom-craft-component-backend.vercel.app/api';
 
 const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
   const stripe = useStripe();
@@ -16,6 +20,25 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  
+  // Address form state
+  const [billingAddress, setBillingAddress] = useState({
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    email: user?.email || '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: 'US'
+  });
+
+  const handleAddressChange = (field, value) => {
+    setBillingAddress(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -28,29 +51,39 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
     setError(null);
 
     try {
-      // Create payment intent
-      const response = await fetch('/api/stripe/create-payment-intent', {
-        method: 'POST',
+      // Create payment intent with billing address
+      const response = await axios.post(`${API_BASE_URL}/stripe/create-payment-intent`, {
+        plan: plan.id,
+        isYearly: isYearly,
+        userId: user.id,
+        billingAddress: billingAddress
+      }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          plan: plan.id,
-          isYearly: isYearly,
-          userId: user.id
-        })
+        }
       });
 
-      const { clientSecret } = await response.json();
+      if (!response.data.success) {
+        throw new Error(response.data.message || 'Failed to create payment intent');
+      }
+
+      const { clientSecret } = response.data;
 
       // Confirm payment with Stripe
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
           billing_details: {
-            name: `${user.firstName} ${user.lastName}`,
-            email: user.email,
+            name: `${billingAddress.firstName} ${billingAddress.lastName}`,
+            email: billingAddress.email,
+            address: {
+              line1: billingAddress.address,
+              city: billingAddress.city,
+              state: billingAddress.state,
+              postal_code: billingAddress.zipCode,
+              country: billingAddress.country,
+            },
           },
         }
       });
@@ -68,7 +101,8 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
       }
       
     } catch (err) {
-      setError('Payment failed. Please try again.');
+      console.error('Payment error:', err);
+      setError(err.response?.data?.message || err.message || 'Payment failed. Please try again.');
       setLoading(false);
     }
   };
@@ -91,13 +125,144 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Billing Information */}
+      <div className="bg-n-7/50 backdrop-blur-sm border border-n-6 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">Billing Information</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-n-3 mb-2">
+              First Name *
+            </label>
+            <input
+              type="text"
+              required
+              value={billingAddress.firstName}
+              onChange={(e) => handleAddressChange('firstName', e.target.value)}
+              className="w-full bg-n-8 border border-n-6 rounded-lg px-4 py-3 text-white placeholder-n-4 focus:border-color-1 focus:ring-1 focus:ring-color-1/20 transition-all duration-300"
+              placeholder="Enter your first name"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-n-3 mb-2">
+              Last Name *
+            </label>
+            <input
+              type="text"
+              required
+              value={billingAddress.lastName}
+              onChange={(e) => handleAddressChange('lastName', e.target.value)}
+              className="w-full bg-n-8 border border-n-6 rounded-lg px-4 py-3 text-white placeholder-n-4 focus:border-color-1 focus:ring-1 focus:ring-color-1/20 transition-all duration-300"
+              placeholder="Enter your last name"
+            />
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-n-3 mb-2">
+            Email Address *
+          </label>
+          <input
+            type="email"
+            required
+            value={billingAddress.email}
+            onChange={(e) => handleAddressChange('email', e.target.value)}
+            className="w-full bg-n-8 border border-n-6 rounded-lg px-4 py-3 text-white placeholder-n-4 focus:border-color-1 focus:ring-1 focus:ring-color-1/20 transition-all duration-300"
+            placeholder="Enter your email address"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-n-3 mb-2">
+            Street Address *
+          </label>
+          <input
+            type="text"
+            required
+            value={billingAddress.address}
+            onChange={(e) => handleAddressChange('address', e.target.value)}
+            className="w-full bg-n-8 border border-n-6 rounded-lg px-4 py-3 text-white placeholder-n-4 focus:border-color-1 focus:ring-1 focus:ring-color-1/20 transition-all duration-300"
+            placeholder="Enter your street address"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-n-3 mb-2">
+              City *
+            </label>
+            <input
+              type="text"
+              required
+              value={billingAddress.city}
+              onChange={(e) => handleAddressChange('city', e.target.value)}
+              className="w-full bg-n-8 border border-n-6 rounded-lg px-4 py-3 text-white placeholder-n-4 focus:border-color-1 focus:ring-1 focus:ring-color-1/20 transition-all duration-300"
+              placeholder="Enter your city"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-n-3 mb-2">
+              State/Province *
+            </label>
+            <input
+              type="text"
+              required
+              value={billingAddress.state}
+              onChange={(e) => handleAddressChange('state', e.target.value)}
+              className="w-full bg-n-8 border border-n-6 rounded-lg px-4 py-3 text-white placeholder-n-4 focus:border-color-1 focus:ring-1 focus:ring-color-1/20 transition-all duration-300"
+              placeholder="Enter your state"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-n-3 mb-2">
+              ZIP/Postal Code *
+            </label>
+            <input
+              type="text"
+              required
+              value={billingAddress.zipCode}
+              onChange={(e) => handleAddressChange('zipCode', e.target.value)}
+              className="w-full bg-n-8 border border-n-6 rounded-lg px-4 py-3 text-white placeholder-n-4 focus:border-color-1 focus:ring-1 focus:ring-color-1/20 transition-all duration-300"
+              placeholder="Enter your ZIP code"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-n-3 mb-2">
+            Country *
+          </label>
+          <select
+            required
+            value={billingAddress.country}
+            onChange={(e) => handleAddressChange('country', e.target.value)}
+            className="w-full bg-n-8 border border-n-6 rounded-lg px-4 py-3 text-white focus:border-color-1 focus:ring-1 focus:ring-color-1/20 transition-all duration-300"
+          >
+            <option value="US">United States</option>
+            <option value="CA">Canada</option>
+            <option value="GB">United Kingdom</option>
+            <option value="AU">Australia</option>
+            <option value="DE">Germany</option>
+            <option value="FR">France</option>
+            <option value="IN">India</option>
+            <option value="JP">Japan</option>
+            <option value="BR">Brazil</option>
+            <option value="MX">Mexico</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Payment Details */}
       <div className="bg-n-7/50 backdrop-blur-sm border border-n-6 rounded-xl p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Payment Details</h3>
         
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-n-3 mb-2">
-              Card Information
+              Card Information *
             </label>
             <div className="bg-n-8 border border-n-6 rounded-lg p-4 transition-all duration-300 focus-within:border-color-1 focus-within:ring-1 focus-within:ring-color-1/20">
               <CardElement
