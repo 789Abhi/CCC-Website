@@ -52,11 +52,16 @@ export const navigation = [
   },
   {
     id: "2",
+    title: "Quick Demo",
+    url: "#demo",
+  },
+  {
+    id: "3",
     title: "Comparison",
     url: "#comparison",
   },
   {
-    id: "3",
+    id: "4",
     title: "Pricing",
     url: "#pricing",
   },

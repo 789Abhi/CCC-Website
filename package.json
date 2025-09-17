@@ -19,6 +19,7 @@
     "react-just-parallax": "^3.1.16",
     "react-router-dom": "^7.8.1",
     "scroll-lock": "^2.1.5",
+    "shepherd.js": "^14.5.1",
     "stripe": "^18.5.0",
     "typewriter-effect": "^2.22.0"
   },

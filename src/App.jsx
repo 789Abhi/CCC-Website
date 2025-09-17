@@ -10,6 +10,7 @@ import Pricing from "./components/Pricing";
 import Roadmap from "./components/Roadmap";
 import Services from "./components/Services";
 import Comparison from "./components/Comparison";
+import WordPressDemo from "./components/WordPressDemo";
 import MeetAbhishekFloatingIcon from "./components/MeetAbhishekFloatingIcon";
 import ModalContainer from "./components/ModalContainer";
 import SuccessMessage from "./components/SuccessMessage";
@@ -65,6 +66,7 @@ const App = () => {
             <Hero />
             <Benefits />
             <Roadmap/>
+             <WordPressDemo />
             <Comparison />
             <HomePricing />
             <Footer />
