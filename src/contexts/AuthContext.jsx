@@ -5,7 +5,7 @@ import axios from 'axios';
 const AuthContext = createContext();
 
 // API base URL - Update this to your backend API URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://custom-craft-component-backend.vercel.app/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://custom-craft-component-backend-jf2lgn95v-789abhis-projects.vercel.app/api';
 
 // Configure axios defaults
 axios.defaults.baseURL = API_BASE_URL;

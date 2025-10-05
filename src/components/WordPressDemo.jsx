@@ -766,7 +766,7 @@ const WordPressDemo = () => {
         if (assignButton && componentGenerated && assignButton.offsetParent !== null) {
           advanceToStep3();
         } else {
-          setTimeout(checkAndAdvance, 300);
+          setTimeout(checkAndAdvance, 300); 
         }
       };
       setTimeout(checkAndAdvance, 1000);
