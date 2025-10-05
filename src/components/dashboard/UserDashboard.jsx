@@ -75,10 +75,16 @@ const UserDashboard = () => {
     
     if (paymentStatus === 'success' && sessionId && user) {
       processPayment(sessionId);
-    } else if (user && user.id && !loading) {
-      fetchLicenses();
     }
   }, [user?.id, location.search]); // Only depend on user.id and location.search, not entire user object
+
+  // Separate effect for fetching licenses when user data is available
+  useEffect(() => {
+    if (user && user.id) {
+      console.log('🔍 UserDashboard - User data available, fetching licenses...');
+      fetchLicenses();
+    }
+  }, [user?.id]); // Only depend on user.id
 
   const fetchLicenses = async () => {
     if (!user?.id) {
@@ -87,9 +93,14 @@ const UserDashboard = () => {
       return;
     }
 
+    console.log('🚀 Starting fetchLicenses for user:', user.id);
+    setLoading(true); // Ensure loading state is set
+
     try {
       console.log('🔍 Fetching licenses for user:', user.id);
       console.log('🔍 User subscription data:', user.subscription);
+      console.log('🔍 Making API call to:', `/licenses/user/${user.id}`);
+      
       const response = await axios.get(`/licenses/user/${user.id}`);
       console.log('✅ Licenses response:', response.data);
       console.log('✅ Number of licenses found:', response.data.licenses?.length || 0);
