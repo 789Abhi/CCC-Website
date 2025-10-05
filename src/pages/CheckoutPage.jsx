@@ -48,9 +48,18 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
     setError(null);
 
     try {
+      // Map frontend plan ID to backend plan name for API
+      const frontendToBackendMapping = {
+        'Personal': 'basic',
+        'Freelancer': 'pro',
+        'Agency': 'max'
+      };
+      
+      const backendPlan = frontendToBackendMapping[plan.id] || plan.id;
+      
       // Create payment intent with billing address
       const response = await axios.post(`${API_BASE_URL}/stripe/create-payment-intent`, {
-        plan: plan.id,
+        plan: backendPlan,
         isYearly: isYearly,
         userId: user.id,
         billingAddress: billingAddress
