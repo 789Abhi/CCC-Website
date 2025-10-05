@@ -465,7 +465,7 @@ const CheckoutPage = () => {
   // Plan definitions (matching HomePricing)
   const plans = [
     {
-      id: 'basic',
+      id: 'Personal',
       name: 'Basic / Personal',
       monthlyPrice: '$3.25',
       yearlyPrice: '$39',
@@ -479,7 +479,7 @@ const CheckoutPage = () => {
       ]   
     },
     {
-      id: 'pro',
+      id: 'Freelancer',
       name: 'Pro / Freelancer',
       monthlyPrice: '$11.99',
       yearlyPrice: '$139',
@@ -494,7 +494,7 @@ const CheckoutPage = () => {
       ]
     },
     {
-      id: 'max',
+      id: 'Agency',
       name: 'Max / Agency',
       monthlyPrice: '$19.99',
       yearlyPrice: '$239',
@@ -533,8 +533,8 @@ const CheckoutPage = () => {
     }
   }, [location, navigate, user]);
 
-  // Get plan from URL params or default to basic
-  const planId = new URLSearchParams(location.search).get('plan') || 'basic';
+  // Get plan from URL params or default to Personal
+  const planId = new URLSearchParams(location.search).get('plan') || 'Personal';
   const isYearly = new URLSearchParams(location.search).get('yearly') === 'true';
   const plan = plans.find(p => p.id === planId) || plans[0];
 
