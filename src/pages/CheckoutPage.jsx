@@ -534,8 +534,17 @@ const CheckoutPage = () => {
   }, [location, navigate, user]);
 
   // Get plan from URL params or default to Personal
-  const planId = new URLSearchParams(location.search).get('plan') || 'Personal';
+  const urlPlanId = new URLSearchParams(location.search).get('plan') || 'Personal';
   const isYearly = new URLSearchParams(location.search).get('yearly') === 'true';
+  
+  // Map backend plan IDs to frontend plan IDs if needed
+  const backendToFrontendMapping = {
+    'basic': 'Personal',
+    'pro': 'Freelancer',
+    'max': 'Agency'
+  };
+  
+  const planId = backendToFrontendMapping[urlPlanId] || urlPlanId;
   const plan = plans.find(p => p.id === planId) || plans[0];
 
   if (!user) {
