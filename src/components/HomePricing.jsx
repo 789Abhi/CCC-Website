@@ -9,7 +9,7 @@ const HomePricing = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handlePayment = async (planName, buttonConfig) => {
+  const handlePayment = async (planId, buttonConfig) => {
     if (!user) {
       navigate('/login');
       return;
@@ -22,8 +22,7 @@ const HomePricing = () => {
     }
 
     // Navigate to checkout page instead of direct Stripe redirect
-    const plan = planName.toLowerCase().split(' ')[0];
-    navigate(`/checkout?plan=${plan}&yearly=${isYearly}`);
+    navigate(`/checkout?plan=${planId}&yearly=${isYearly}`);
   };
 
   // Get user's current plan
@@ -291,7 +290,7 @@ const HomePricing = () => {
                           ? 'bg-green-500 hover:bg-green-600 text-white cursor-pointer' 
                           : ''
                       }`}
-                      onClick={() => handlePayment(plan.name, buttonConfig)}
+                      onClick={() => handlePayment(plan.id, buttonConfig)}
                       disabled={buttonConfig.disabled}
                     >
                       {buttonConfig.text}
