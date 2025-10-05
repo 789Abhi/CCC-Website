@@ -29,16 +29,27 @@ const HomePricing = () => {
   // Get user's current plan
   const currentPlan = user?.subscription?.plan || 'free';
   
+  // Map backend plan names to frontend plan IDs
+  const planMapping = {
+    'basic': 'Personal',
+    'pro': 'Freelancer', 
+    'max': 'Agency'
+  };
+  
+  // Convert current plan to frontend plan ID
+  const currentPlanId = planMapping[currentPlan] || 'free';
+  
   // Debug logging
   console.log('🔍 HomePricing - User:', user);
   console.log('🔍 HomePricing - Current plan:', currentPlan);
+  console.log('🔍 HomePricing - Current plan ID:', currentPlanId);
   console.log('🔍 HomePricing - User subscription:', user?.subscription);
 
   // Determine button text and style based on current plan
   const getButtonConfig = (planId) => {
-    console.log('🔍 getButtonConfig - Comparing:', { currentPlan, planId, match: currentPlan === planId });
+    console.log('🔍 getButtonConfig - Comparing:', { currentPlan, currentPlanId, planId, match: currentPlanId === planId });
     
-    if (currentPlan === planId) {
+    if (currentPlanId === planId) {
       return {
         text: 'Active',
         style: 'active',
@@ -65,19 +76,22 @@ const HomePricing = () => {
   // Check if user can upgrade to a plan
   const canUpgrade = (currentPlan, targetPlan) => {
     const upgradePaths = {
-      'free': ['basic', 'pro', 'max'],
-      'basic': ['pro', 'max'],
-      'pro': ['max'],
+      'free': ['Personal', 'Freelancer', 'Agency'],
+      'basic': ['Freelancer', 'Agency'],
+      'pro': ['Agency'],
       'max': []
     };
+    
+    // Map backend plan to frontend plan ID for comparison
+    const currentPlanId = planMapping[currentPlan] || currentPlan;
     return upgradePaths[currentPlan]?.includes(targetPlan) || false;
   };
 
   // Determine plan tag (Most Popular, Subscribed, or none)
   const getPlanTag = (planId) => {
-    console.log('🔍 getPlanTag - Comparing:', { currentPlan, planId, match: currentPlan === planId });
+    console.log('🔍 getPlanTag - Comparing:', { currentPlan, currentPlanId, planId, match: currentPlanId === planId });
     
-    if (currentPlan === planId) {
+    if (currentPlanId === planId) {
       return {
         text: 'Subscribed',
         style: 'subscribed'
