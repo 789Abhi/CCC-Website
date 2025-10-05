@@ -15,7 +15,7 @@ const PricingPage = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const handlePayment = async (planName, buttonConfig) => {
+  const handlePayment = async (planId, buttonConfig) => {
     if (!user) {
       navigate('/login');
       return;
@@ -28,16 +28,25 @@ const PricingPage = () => {
     }
 
     // Navigate to checkout page instead of direct Stripe redirect
-    const plan = planName.toLowerCase().split(' ')[0];
-    navigate(`/checkout?plan=${plan}&yearly=${isYearly}`);
+    navigate(`/checkout?plan=${planId}&yearly=${isYearly}`);
   };
 
   // Get user's current plan
   const currentPlan = user?.subscription?.plan || 'free';
+  
+  // Map backend plan names to frontend plan IDs
+  const planMapping = {
+    'basic': 'Personal',
+    'pro': 'Freelancer', 
+    'max': 'Agency'
+  };
+  
+  // Convert current plan to frontend plan ID
+  const currentPlanId = planMapping[currentPlan] || 'free';
 
   // Determine button text and style based on current plan
   const getButtonConfig = (planId) => {
-    if (currentPlan === planId) {
+    if (currentPlanId === planId) {
       return {
         text: 'Active',
         style: 'active',
@@ -64,22 +73,25 @@ const PricingPage = () => {
   // Check if user can upgrade to a plan
   const canUpgrade = (currentPlan, targetPlan) => {
     const upgradePaths = {
-      'free': ['basic', 'pro', 'max'],
-      'basic': ['pro', 'max'],
-      'pro': ['max'],
+      'free': ['Personal', 'Freelancer', 'Agency'],
+      'basic': ['Freelancer', 'Agency'],
+      'pro': ['Agency'],
       'max': []
     };
+    
+    // targetPlan is already a frontend plan ID (Personal, Freelancer, Agency)
+    // currentPlan is a backend plan name (free, basic, pro, max)
     return upgradePaths[currentPlan]?.includes(targetPlan) || false;
   };
 
   // Determine plan tag (Most Popular, Subscribed, or none)
   const getPlanTag = (planId) => {
-    if (currentPlan === planId) {
+    if (currentPlanId === planId) {
       return {
         text: 'Subscribed',
         style: 'subscribed'
       };
-    } else if (planId === 'pro' && currentPlan === 'free') {
+    } else if (planId === 'Freelancer' && currentPlan === 'basic') {
       return {
         text: 'Most Popular',
         style: 'popular'
@@ -90,7 +102,7 @@ const PricingPage = () => {
   };
   const plans = [
     {
-      id: 'basic',
+      id: 'Personal',
       name: 'Basic / Personal',
       monthlyPrice: '$3.25',
       yearlyPrice: '$39',
@@ -104,7 +116,7 @@ const PricingPage = () => {
       ]
     },
     {
-      id: 'pro',
+      id: 'Freelancer',
       name: 'Pro / Freelancer',
       monthlyPrice: '$11.99',
       yearlyPrice: '$139',
@@ -119,7 +131,7 @@ const PricingPage = () => {
       ]
     },
     {
-      id: 'max',
+      id: 'Agency',
       name: 'Max / Agency',
       monthlyPrice: '$19.99',
       yearlyPrice: '$239',
@@ -277,7 +289,7 @@ const PricingPage = () => {
                           ? 'bg-green-500 hover:bg-green-600 text-white cursor-pointer' 
                           : ''
                       }`}
-                      onClick={() => handlePayment(plan.name, buttonConfig)}
+                      onClick={() => handlePayment(plan.id, buttonConfig)}
                       disabled={buttonConfig.disabled}
                     >
                       {buttonConfig.text}

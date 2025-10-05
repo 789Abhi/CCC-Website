@@ -81,8 +81,8 @@ const HomePricing = () => {
       'max': []
     };
     
-    // Map backend plan to frontend plan ID for comparison
-    const currentPlanId = planMapping[currentPlan] || currentPlan;
+    // targetPlan is already a frontend plan ID (Personal, Freelancer, Agency)
+    // currentPlan is a backend plan name (free, basic, pro, max)
     return upgradePaths[currentPlan]?.includes(targetPlan) || false;
   };
 
