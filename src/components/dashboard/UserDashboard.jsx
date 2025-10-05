@@ -367,41 +367,6 @@ const UserDashboard = () => {
                     Upgrade Plan
                   </button>
                 )}
-                {licenses.length > 0 && user.subscription?.plan === 'basic' && (
-                  <button
-                    onClick={async () => {
-                      console.log('🔄 Manual sync triggered');
-                      try {
-                        // Use license data as source of truth
-                        const latestLicense = licenses[0];
-                        const licensePlan = latestLicense.plan;
-                        
-                        if (licensePlan) {
-                          const updatedUser = {
-                            ...user,
-                            subscription: {
-                              ...user.subscription,
-                              plan: licensePlan,
-                              isPro: licensePlan === 'basic' || licensePlan === 'pro' || licensePlan === 'max'
-                            }
-                          };
-                          
-                          setUser(updatedUser);
-                          console.log('✅ Manual sync successful, plan updated to:', licensePlan);
-                          showSuccess('Subscription data synced successfully!');
-                        } else {
-                          showSuccess('No license plan found to sync.');
-                        }
-                      } catch (syncError) {
-                        console.error('❌ Error in manual sync:', syncError);
-                        showSuccess('Sync failed. Please try again.');
-                      }
-                    }}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors font-semibold text-sm"
-                  >
-                    Sync Subscription
-                  </button>
-                )}
                 <button
                   onClick={() => {
                     logout();
