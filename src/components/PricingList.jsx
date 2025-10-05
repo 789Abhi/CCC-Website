@@ -14,7 +14,7 @@ const PricingList = () => {
     
     // Map backend plan names to frontend plan names
     const planMapping = {
-      'personal': 'Personal',
+      'basic': 'Personal',
       'pro': 'Freelancer',
       'max': 'Agency'
     };

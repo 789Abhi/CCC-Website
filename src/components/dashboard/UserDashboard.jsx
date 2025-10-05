@@ -199,7 +199,6 @@ const UserDashboard = () => {
 
   const getPlanColor = (plan) => {
     switch (plan) {
-      case 'free': return 'text-green-400 bg-green-500/20 border border-green-500/30';
       case 'basic': return 'text-blue-400 bg-blue-500/20 border border-blue-500/30';
       case 'pro': return 'text-purple-400 bg-purple-500/20 border border-purple-500/30';
       case 'max': return 'text-yellow-400 bg-yellow-500/20 border border-yellow-500/30';
@@ -314,8 +313,8 @@ const UserDashboard = () => {
                 <label className="block text-sm font-medium text-n-2 mb-2">Subscription Plan</label>
                 {console.log('🔍 UserDashboard - User subscription:', user?.subscription)}
                 {console.log('🔍 UserDashboard - User subscription plan:', user?.subscription?.plan)}
-                <span className={`inline-flex px-4 py-2 text-sm font-semibold rounded-full ${getPlanColor(user.subscription?.plan || 'free')}`}>
-                  {(user.subscription?.plan || 'free').toUpperCase()}
+                <span className={`inline-flex px-4 py-2 text-sm font-semibold rounded-full ${getPlanColor(user.subscription?.plan || 'basic')}`}>
+                  {(user.subscription?.plan || 'basic').toUpperCase()}
                 </span>
               </div>
               <div>
@@ -329,7 +328,7 @@ const UserDashboard = () => {
                 <p className="text-n-1 font-medium">{formatDate(user.createdAt)}</p>
               </div>
               <div className="flex items-end gap-3">
-                {user.subscription?.plan === 'free' && (
+                {user.subscription?.plan === 'basic' && (
                   <button
                     onClick={() => navigate('/pricing')}
                     className="bg-gradient-to-r from-color-1 to-color-2 text-n-8 px-6 py-2 rounded-lg hover:from-color-1/90 hover:to-color-2/90 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
@@ -337,7 +336,7 @@ const UserDashboard = () => {
                     Upgrade Plan
                   </button>
                 )}
-                {licenses.length > 0 && user.subscription?.plan === 'free' && (
+                {licenses.length > 0 && user.subscription?.plan === 'basic' && (
                   <button
                     onClick={async () => {
                       console.log('🔄 Manual sync triggered');
@@ -462,8 +461,8 @@ const UserDashboard = () => {
                           </div>
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getPlanColor(license.plan || 'free')}`}>
-                            {(license.plan || 'free').toUpperCase()}
+                          <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getPlanColor(license.plan || 'basic')}`}>
+                            {(license.plan || 'basic').toUpperCase()}
                           </span>
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap">
