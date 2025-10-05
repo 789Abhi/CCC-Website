@@ -82,7 +82,7 @@ const HomePricing = () => {
         text: 'Subscribed',
         style: 'subscribed'
       };
-    } else if (planId === 'pro' && currentPlan === 'free') {
+    } else if (planId === 'Freelancer' && currentPlan === 'basic') {
       return {
         text: 'Most Popular',
         style: 'popular'
@@ -93,7 +93,7 @@ const HomePricing = () => {
   };
   const plans = [
     {
-      id: 'basic',
+      id: 'Personal',
       name: 'Basic / Personal',
       monthlyPrice: '$3.25',
       yearlyPrice: '$39',
@@ -107,7 +107,7 @@ const HomePricing = () => {
       ]   
     },
     {
-      id: 'pro',
+      id: 'Freelancer',
       name: 'Pro / Freelancer',
       monthlyPrice: '$11.99',
       yearlyPrice: '$139',
@@ -122,7 +122,7 @@ const HomePricing = () => {
       ]
     },
     {
-      id: 'max',
+      id: 'Agency',
       name: 'Max / Agency',
       monthlyPrice: '$19.99',
       yearlyPrice: '$239',
