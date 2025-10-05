@@ -144,7 +144,7 @@ const UserDashboard = () => {
               subscription: {
                 ...user.subscription,
                 plan: licensePlan,
-                isPro: licensePlan === 'pro' || licensePlan === 'max'
+                isPro: licensePlan === 'basic' || licensePlan === 'pro' || licensePlan === 'max'
               }
             };
             
@@ -382,7 +382,7 @@ const UserDashboard = () => {
                             subscription: {
                               ...user.subscription,
                               plan: licensePlan,
-                              isPro: licensePlan === 'pro' || licensePlan === 'max'
+                              isPro: licensePlan === 'basic' || licensePlan === 'pro' || licensePlan === 'max'
                             }
                           };
                           
