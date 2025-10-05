@@ -89,10 +89,30 @@ const UserDashboard = () => {
 
     try {
       console.log('🔍 Fetching licenses for user:', user.id);
+      console.log('🔍 User subscription data:', user.subscription);
       const response = await axios.get(`/licenses/user/${user.id}`);
       console.log('✅ Licenses response:', response.data);
+      console.log('✅ Number of licenses found:', response.data.licenses?.length || 0);
       if (response.data.success) {
         setLicenses(response.data.licenses);
+        
+        // If user has a paid plan but no licenses, generate one automatically
+        if (response.data.licenses.length === 0 && user.subscription?.plan && user.subscription.plan !== 'free') {
+          console.log('🔄 No licenses found for paid user, generating license automatically...');
+          try {
+            const generateResponse = await axios.post('/licenses/generate', {
+              isPro: user.subscription.plan === 'pro' || user.subscription.plan === 'max'
+            });
+            console.log('✅ License generated:', generateResponse.data);
+            // Refresh licenses after generation by calling the API again
+            const refreshResponse = await axios.get(`/licenses/user/${user.id}`);
+            if (refreshResponse.data.success) {
+              setLicenses(refreshResponse.data.licenses);
+            }
+          } catch (generateError) {
+            console.error('❌ Failed to generate license:', generateError);
+          }
+        }
         
         // Check if there's a mismatch between license plan and user subscription plan
         if (response.data.licenses.length > 0) {
