@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useModal } from '../../contexts/ModalContext';
 import Button from '../Button';
 
 const UserDashboardModal = ({ isOpen, onClose }) => {
   const { user, logout } = useAuth();
+  const { showSuccess } = useModal();
   const [licenses, setLicenses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,12 +37,18 @@ const UserDashboardModal = ({ isOpen, onClose }) => {
 
   const handleLogout = () => {
     logout();
+    showSuccess('You have been successfully logged out.');
     onClose();
   };
 
-  const copyLicenseKey = (licenseKey) => {
-    navigator.clipboard.writeText(licenseKey);
-    // You could add a toast notification here
+  const copyLicenseKey = async (licenseKey) => {
+    try {
+      await navigator.clipboard.writeText(licenseKey);
+      showSuccess('License key copied to clipboard!');
+    } catch (error) {
+      console.error('Failed to copy license key:', error);
+      showSuccess('Failed to copy license key. Please copy manually.');
+    }
   };
 
   if (!user) return null;

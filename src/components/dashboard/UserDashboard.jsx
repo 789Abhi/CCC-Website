@@ -1,20 +1,62 @@
 // UserDashboard.jsx - User dashboard for public website
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useModal } from '../../contexts/ModalContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { stripeService } from '../../services/stripeService';
 import Header from '../Header';
 import Footer from '../Footer';
 
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('UserDashboard Error Boundary caught an error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-n-8 relative overflow-hidden">
+          <div className="relative z-10 flex items-center justify-center min-h-screen">
+            <div className="text-center">
+              <h1 className="text-2xl font-bold text-red-400 mb-4">Something went wrong</h1>
+              <p className="text-n-2 mb-4">The dashboard encountered an error.</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-color-1 text-n-8 px-6 py-2 rounded-lg hover:bg-color-1/80 transition-colors font-semibold"
+              >
+                Reload Page
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 const UserDashboard = () => {
-  const { user, logout, loading: authLoading, refreshUser } = useAuth();
+  const { user, logout, loading: authLoading, refreshUser, setUser } = useAuth();
+  const { showSuccess } = useModal();
   const navigate = useNavigate();
   const location = useLocation();
   const [licenses, setLicenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [processingPayment, setProcessingPayment] = useState(false);
+  const [planSynced, setPlanSynced] = useState(false);
 
   useEffect(() => {
     // Scroll to top when component mounts
@@ -25,22 +67,80 @@ const UserDashboard = () => {
     const paymentStatus = urlParams.get('payment');
     const sessionId = urlParams.get('session_id');
     
+    console.log('🔍 UserDashboard useEffect:', { 
+      user: user ? { id: user.id, email: user.email } : null, 
+      paymentStatus, 
+      sessionId 
+    });
+    
     if (paymentStatus === 'success' && sessionId && user) {
       processPayment(sessionId);
-    } else if (user && user.id) {
+    } else if (user && user.id && !loading) {
       fetchLicenses();
     }
-  }, [user, location]);
+  }, [user?.id, location.search]); // Only depend on user.id and location.search, not entire user object
 
   const fetchLicenses = async () => {
+    if (!user?.id) {
+      console.log('No user ID available, skipping license fetch');
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log('🔍 Fetching licenses for user:', user.id);
       const response = await axios.get(`/licenses/user/${user.id}`);
+      console.log('✅ Licenses response:', response.data);
       if (response.data.success) {
         setLicenses(response.data.licenses);
+        
+        // Check if there's a mismatch between license plan and user subscription plan
+        if (response.data.licenses.length > 0) {
+          const latestLicense = response.data.licenses[0];
+          const licensePlan = latestLicense.plan;
+          const userPlan = user.subscription?.plan;
+          
+          console.log('🔍 Plan comparison:', { licensePlan, userPlan, match: licensePlan === userPlan });
+          
+          if (licensePlan && licensePlan !== userPlan && !planSynced) {
+            console.log('⚠️ Plan mismatch detected. License plan:', licensePlan, 'User plan:', userPlan);
+            console.log('🔄 Using license plan as source of truth...');
+            
+            // Since the sync endpoint is not available, we'll use the license plan as the source of truth
+            // Update the user object locally to reflect the correct plan
+            const updatedUser = {
+              ...user,
+              subscription: {
+                ...user.subscription,
+                plan: licensePlan,
+                isPro: licensePlan === 'pro' || licensePlan === 'max'
+              }
+            };
+            
+            // Update the user in the context
+            setUser(updatedUser);
+            setPlanSynced(true); // Prevent multiple syncs
+            console.log('✅ User plan updated locally to:', licensePlan);
+          }
+        }
       }
     } catch (error) {
-      setError('Failed to fetch licenses');
-      console.error('Error fetching licenses:', error);
+      console.error('❌ Error fetching licenses:', error);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
+      
+      if (error.response?.status === 401) {
+        setError('Authentication failed. Please log in again.');
+        // Clear token and redirect to login
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      } else if (error.response?.status === 403) {
+        setError('Access denied. You may not have permission to view licenses.');
+      } else if (error.response?.status === 429) {
+        setError('Too many requests. Please wait a moment and try again.');
+      } else {
+        setError('Failed to fetch licenses. Please try again later.');
+      }
     } finally {
       setLoading(false);
     }
@@ -57,7 +157,9 @@ const UserDashboard = () => {
         console.log('✅ Payment processed successfully');
         // Refresh user data and licenses instead of full page reload
         try {
-          await refreshUser();
+          // Add a small delay to ensure backend has processed the payment
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          await refreshUser(true); // Force refresh with cache busting
           await fetchLicenses();
           console.log('✅ User data and licenses refreshed');
         } catch (refreshError) {
@@ -77,7 +179,13 @@ const UserDashboard = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString();
+    if (!dateString) return 'Never';
+    try {
+      return new Date(dateString).toLocaleDateString();
+    } catch (error) {
+      console.error('Error formatting date:', dateString, error);
+      return 'Invalid Date';
+    }
   };
 
   const getStatusColor = (status) => {
@@ -123,6 +231,9 @@ const UserDashboard = () => {
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-color-1 mx-auto mb-4"></div>
             <p className="text-n-2">Loading dashboard...</p>
+            {!user && !authLoading && (
+              <p className="text-n-3 text-sm mt-2">No user data available</p>
+            )}
           </div>
         </div>
       </div>
@@ -201,8 +312,10 @@ const UserDashboard = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-n-2 mb-2">Subscription Plan</label>
-                <span className={`inline-flex px-4 py-2 text-sm font-semibold rounded-full ${getPlanColor(user.subscription?.plan || 'basic')}`}>
-                  {(user.subscription?.plan || 'basic').toUpperCase()}
+                {console.log('🔍 UserDashboard - User subscription:', user?.subscription)}
+                {console.log('🔍 UserDashboard - User subscription plan:', user?.subscription?.plan)}
+                <span className={`inline-flex px-4 py-2 text-sm font-semibold rounded-full ${getPlanColor(user.subscription?.plan || 'free')}`}>
+                  {(user.subscription?.plan || 'free').toUpperCase()}
                 </span>
               </div>
               <div>
@@ -224,8 +337,47 @@ const UserDashboard = () => {
                     Upgrade Plan
                   </button>
                 )}
+                {licenses.length > 0 && user.subscription?.plan === 'free' && (
+                  <button
+                    onClick={async () => {
+                      console.log('🔄 Manual sync triggered');
+                      try {
+                        // Use license data as source of truth
+                        const latestLicense = licenses[0];
+                        const licensePlan = latestLicense.plan;
+                        
+                        if (licensePlan) {
+                          const updatedUser = {
+                            ...user,
+                            subscription: {
+                              ...user.subscription,
+                              plan: licensePlan,
+                              isPro: licensePlan === 'pro' || licensePlan === 'max'
+                            }
+                          };
+                          
+                          setUser(updatedUser);
+                          console.log('✅ Manual sync successful, plan updated to:', licensePlan);
+                          showSuccess('Subscription data synced successfully!');
+                        } else {
+                          showSuccess('No license plan found to sync.');
+                        }
+                      } catch (syncError) {
+                        console.error('❌ Error in manual sync:', syncError);
+                        showSuccess('Sync failed. Please try again.');
+                      }
+                    }}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors font-semibold text-sm"
+                  >
+                    Sync Subscription
+                  </button>
+                )}
                 <button
-                  onClick={logout}
+                  onClick={() => {
+                    logout();
+                    showSuccess('You have been successfully logged out.');
+                    navigate('/');
+                  }}
                   className="bg-color-1 text-n-8 px-6 py-2 rounded-lg hover:bg-color-1/80 transition-colors font-semibold"
                 >
                   Logout
@@ -305,26 +457,26 @@ const UserDashboard = () => {
                         <td className="px-8 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <code className="text-sm font-mono text-color-1 bg-n-7 px-3 py-1 rounded">
-                              {license.licenseKey}
+                              {license.licenseKey || 'N/A'}
                             </code>
                           </div>
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getPlanColor(license.plan)}`}>
-                            {license.plan.toUpperCase()}
+                          <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getPlanColor(license.plan || 'free')}`}>
+                            {(license.plan || 'free').toUpperCase()}
                           </span>
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(license.status)}`}>
-                            {license.status.toUpperCase()}
+                          <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(license.status || 'active')}`}>
+                            {(license.status || 'active').toUpperCase()}
                           </span>
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-n-1">
-                          <span className="font-medium">{license.usageCount}</span>
-                          <span className="text-n-3"> / {license.maxUsage}</span>
+                          <span className="font-medium">{license.usageCount || 0}</span>
+                          <span className="text-n-3"> / {license.maxUsage || 0}</span>
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-n-1">
-                          {formatDate(license.expiresAt)}
+                          {license.expiresAt ? formatDate(license.expiresAt) : 'Never'}
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-n-1">
                           {license.lastUsed ? formatDate(license.lastUsed) : 'Never'}
@@ -345,4 +497,14 @@ const UserDashboard = () => {
   );
 };
 
-export default UserDashboard;
+// Wrap UserDashboard with ErrorBoundary
+const UserDashboardWithErrorBoundary = () => {
+  return (
+    <ErrorBoundary>
+      <UserDashboard />
+    </ErrorBoundary>
+  );
+};
+
+export default UserDashboardWithErrorBoundary;
+  

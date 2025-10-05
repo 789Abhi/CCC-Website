@@ -28,9 +28,16 @@ const HomePricing = () => {
 
   // Get user's current plan
   const currentPlan = user?.subscription?.plan || 'free';
+  
+  // Debug logging
+  console.log('🔍 HomePricing - User:', user);
+  console.log('🔍 HomePricing - Current plan:', currentPlan);
+  console.log('🔍 HomePricing - User subscription:', user?.subscription);
 
   // Determine button text and style based on current plan
   const getButtonConfig = (planId) => {
+    console.log('🔍 getButtonConfig - Comparing:', { currentPlan, planId, match: currentPlan === planId });
+    
     if (currentPlan === planId) {
       return {
         text: 'Active',
@@ -68,6 +75,8 @@ const HomePricing = () => {
 
   // Determine plan tag (Most Popular, Subscribed, or none)
   const getPlanTag = (planId) => {
+    console.log('🔍 getPlanTag - Comparing:', { currentPlan, planId, match: currentPlan === planId });
+    
     if (currentPlan === planId) {
       return {
         text: 'Subscribed',

@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }) => {
           if (response.data.success) {
             setUser(response.data.user);
           } else {
+            console.log('Auth check failed - removing invalid token');
             localStorage.removeItem('token');
             setToken(null);
           }
@@ -49,15 +50,23 @@ export const AuthProvider = ({ children }) => {
           console.error('Auth check failed:', error);
           console.error('Auth check error details:', error.response?.data);
           console.error('Auth check error status:', error.response?.status);
-          localStorage.removeItem('token');
-          setToken(null);
+          
+          // If token is invalid (401), remove it
+          if (error.response?.status === 401) {
+            console.log('Token is invalid or expired - removing from storage');
+            localStorage.removeItem('token');
+            setToken(null);
+          }
         }
       }
       setLoading(false);
     };
 
-    checkAuth();
-  }, [token]);
+    // Only check auth once on mount, not on every token change
+    if (loading) {
+      checkAuth();
+    }
+  }, []); // Remove token dependency to prevent multiple calls
 
   const login = async (email, password, rememberMeFlag = false) => {
     try {
@@ -83,7 +92,59 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: response.data.message };
       }
     } catch (error) {
+      console.error('❌ Frontend login error:', error);
+      
+      // Handle rate limiting specifically
+      if (error.response?.status === 429) {
+        const retryAfter = error.response.headers['retry-after'] || 60;
+        return { 
+          success: false, 
+          message: `Too many login attempts. Please wait ${retryAfter} seconds before trying again.` 
+        };
+      }
+      
       const message = error.response?.data?.message || 'Login failed';
+      return { success: false, message };
+    }
+  };
+
+  const loginWithGoogle = async (credential) => {
+    try {
+      console.log('🔐 Frontend Google OAuth attempt');
+      
+      const response = await axios.post('/auth/google', { 
+        credential 
+      });
+      
+      if (response.data.success) {
+        const { token: newToken, user: userData } = response.data;
+        
+        // Store token and remember me preference (Google OAuth always remembers)
+        localStorage.setItem('token', newToken);
+        localStorage.setItem('rememberMe', 'true');
+        
+        setToken(newToken);
+        setUser(userData);
+        setRememberMe(true);
+        
+        console.log('✅ Google OAuth successful:', userData.email);
+        return { success: true, user: userData };
+      } else {
+        return { success: false, message: response.data.message };
+      }
+    } catch (error) {
+      console.error('❌ Frontend Google OAuth error:', error);
+      
+      // Handle rate limiting specifically
+      if (error.response?.status === 429) {
+        const retryAfter = error.response.headers['retry-after'] || 60;
+        return { 
+          success: false, 
+          message: `Too many requests. Please wait ${retryAfter} seconds before trying again.` 
+        };
+      }
+      
+      const message = error.response?.data?.message || 'Google authentication failed';
       return { success: false, message };
     }
   };
@@ -120,6 +181,15 @@ export const AuthProvider = ({ children }) => {
       console.error('❌ Frontend registration error:', error);
       console.error('❌ Error response:', error.response?.data);
       
+      // Handle rate limiting specifically
+      if (error.response?.status === 429) {
+        const retryAfter = error.response.headers['retry-after'] || 60;
+        return { 
+          success: false, 
+          message: `Too many registration attempts. Please wait ${retryAfter} seconds before trying again.` 
+        };
+      }
+      
       let message = 'Registration failed';
       
       if (error.response?.data?.message) {
@@ -142,32 +212,63 @@ export const AuthProvider = ({ children }) => {
     setRememberMe(false);
   };
 
-  const refreshUser = async () => {
+  const refreshUser = async (forceRefresh = false) => {
     if (token) {
       try {
-        const response = await axios.get('/auth/me');
+        // Add cache-busting parameter if force refresh is requested
+        const url = forceRefresh ? `/auth/me?t=${Date.now()}` : '/auth/me';
+        const response = await axios.get(url);
         if (response.data.success) {
+          console.log('🔍 Frontend received user data:', response.data.user);
+          console.log('🔍 User subscription:', response.data.user.subscription);
           setUser(response.data.user);
           return { success: true, user: response.data.user };
         }
       } catch (error) {
         console.error('Failed to refresh user data:', error);
+        
+        // If token is invalid, remove it
+        if (error.response?.status === 401) {
+          console.log('Token expired during refresh - logging out');
+          localStorage.removeItem('token');
+          setToken(null);
+          setUser(null);
+        }
+        
         return { success: false, message: 'Failed to refresh user data' };
       }
     }
     return { success: false, message: 'No token available' };
   };
 
+  // Add request throttling to prevent excessive API calls
+  const [lastRequestTime, setLastRequestTime] = useState(0);
+  const REQUEST_THROTTLE_MS = 1000; // Minimum 1 second between requests
+
+  const throttledRequest = async (requestFn) => {
+    const now = Date.now();
+    if (now - lastRequestTime < REQUEST_THROTTLE_MS) {
+      console.log('Request throttled - too many requests');
+      return { success: false, message: 'Request throttled - please wait' };
+    }
+    
+    setLastRequestTime(now);
+    return await requestFn();
+  };
+
   const value = {
     user,
     login,
+    loginWithGoogle,
     register,
     logout,
     refreshUser,
+    setUser,
     loading,
     rememberMe,
     setRememberMe,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
+    throttledRequest
   };
 
   return (

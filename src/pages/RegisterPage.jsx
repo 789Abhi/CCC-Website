@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useModal } from '../contexts/ModalContext';
 import Button from '../components/Button';
 import Header from '../components/Header';
+import GoogleAuthButton from '../components/GoogleAuthButton';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -74,6 +75,20 @@ const RegisterPage = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = (user) => {
+    setSuccess(true);
+    showSuccess('🎉 Google registration successful! Welcome to Custom Craft Components!');
+    
+    // Auto-redirect to dashboard after 2 seconds since user is now logged in
+    setTimeout(() => {
+      navigate('/dashboard');
+    }, 2000);
+  };
+
+  const handleGoogleError = (error) => {
+    setError(error);
   };
 
   return (
@@ -256,6 +271,23 @@ const RegisterPage = () => {
                 {isLoading ? 'Creating Account...' : 'Create Account'}
               </Button>
             </form>
+
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-n-6"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-n-8 text-n-2">Or continue with</span>
+              </div>
+            </div>
+
+            {/* Google OAuth Button */}
+            <GoogleAuthButton
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              className="mb-6"
+            />
 
             <div className="text-center mt-6">
               <p className="text-n-2 text-sm">

@@ -1,8 +1,29 @@
 import { check } from "../assets";
 import { pricing } from "../constants";
 import Button from "./Button";
+import { useAuth } from "../contexts/AuthContext";
 
 const PricingList = () => {
+  const { user, isAuthenticated } = useAuth();
+
+  // Helper function to determine current plan
+  const getCurrentPlan = () => {
+    if (!isAuthenticated || !user || !user.subscription) {
+      return null;
+    }
+    
+    // Map backend plan names to frontend plan names
+    const planMapping = {
+      'personal': 'Personal',
+      'pro': 'Freelancer',
+      'max': 'Agency'
+    };
+    
+    return planMapping[user.subscription.plan] || null;
+  };
+
+  const currentPlan = getCurrentPlan();
+
   return (
     <div className="flex gap-[1rem] max-lg:flex-wrap">
       {pricing.map((plan, i) => (
@@ -31,7 +52,7 @@ const PricingList = () => {
             href={plan.price ? "#" : "mailto:info@example.com"}
             white={!plan.premium}
           >
-            {plan.price ? "Get started" : "Contact us"}
+            {plan.price ? (currentPlan === plan.title ? "Active" : "Get started") : "Contact us"}
           </Button>
 
           <ul>

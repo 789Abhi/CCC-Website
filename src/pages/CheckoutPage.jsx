@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { stripePromise } from '../config/stripe';
 import { stripeService } from '../services/stripeService';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
-
-// Stripe public key
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 // API base URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://custom-craft-component-backend.vercel.app/api';
@@ -112,7 +109,9 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
             
             // Refresh user data to get updated subscription
             try {
-              await refreshUser();
+              // Add a small delay to ensure backend has processed the payment
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              await refreshUser(true); // Force refresh with cache busting
               console.log('✅ User data refreshed successfully');
             } catch (refreshError) {
               console.error('❌ Error refreshing user data:', refreshError);

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useModal } from '../../contexts/ModalContext';
 import Button from '../Button';
+import GoogleAuthButton from '../GoogleAuthButton';
 
 const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
   const [formData, setFormData] = useState({
@@ -12,6 +14,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const { login } = useAuth();
+  const { showSuccess } = useModal();
 
   const handleChange = (e) => {
     setFormData({
@@ -27,13 +30,37 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
     setError('');
 
     try {
-      await login(formData.email, formData.password, rememberMe);
-      onClose(); // Close modal on successful login
+      const result = await login(formData.email, formData.password, rememberMe);
+      
+      if (result.success) {
+        // Show success message
+        showSuccess('Welcome back! You have successfully logged in.');
+        
+        // Close modal after a short delay to ensure user sees the success message
+        setTimeout(() => {
+          onClose();
+        }, 1000);
+      } else {
+        setError(result.message || 'Login failed. Please check your credentials.');
+      }
     } catch (err) {
-      setError(err.message || 'Login failed');
+      setError(err.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = (user) => {
+    showSuccess('Welcome back! You have successfully logged in with Google.');
+    
+    // Close modal after a short delay to ensure user sees the success message
+    setTimeout(() => {
+      onClose();
+    }, 1000);
+  };
+
+  const handleGoogleError = (error) => {
+    setError(error);
   };
 
   return (
@@ -50,6 +77,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
             value={formData.email}
             onChange={handleChange}
             required
+            autoComplete="email"
             className="w-full px-4 py-3 bg-n-7 border border-n-6 rounded-lg text-n-1 placeholder-n-2/50 focus:outline-none focus:border-color-1 transition-colors"
             placeholder="Enter your email"
           />
@@ -67,6 +95,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
               value={formData.password}
               onChange={handleChange}
               required
+              autoComplete="current-password"
               className="w-full px-4 py-3 pr-12 bg-n-7 border border-n-6 rounded-lg text-n-1 placeholder-n-2/50 focus:outline-none focus:border-color-1 transition-colors"
               placeholder="Enter your password"
             />
@@ -105,8 +134,13 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
         </div>
 
         {error && (
-          <div className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-lg p-3">
-            {error}
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+            <div className="flex items-center space-x-2">
+              <svg className="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-red-400 text-sm font-medium">{error}</p>
+            </div>
           </div>
         )}
 
@@ -119,6 +153,23 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
           {isLoading ? 'Signing In...' : 'Sign In'}
         </Button>
       </form>
+
+      {/* Divider */}
+      <div className="relative my-4">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-n-6"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-n-8 text-n-2">Or continue with</span>
+        </div>
+      </div>
+
+      {/* Google OAuth Button */}
+      <GoogleAuthButton
+        onSuccess={handleGoogleSuccess}
+        onError={handleGoogleError}
+        className="mb-4"
+      />
 
       <div className="text-center">
         <p className="text-n-2 text-sm">
