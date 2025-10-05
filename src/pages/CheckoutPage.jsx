@@ -132,6 +132,10 @@ const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
       
     } catch (err) {
       console.error('Payment error:', err);
+      console.error('Payment error response:', err.response?.data);
+      if (err.response?.data?.debug) {
+        console.error('🔍 Backend Debug Info:', err.response.data.debug);
+      }
       setError(err.response?.data?.message || err.message || 'Payment failed. Please try again.');
       setLoading(false);
     }
