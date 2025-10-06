@@ -2,7 +2,7 @@
 import { stripePromise } from '../config/stripe';
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://custom-craft-component-backend-jf2lgn95v-789abhis-projects.vercel.app/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://custom-craft-component-backend-gmvey1e30-789abhis-projects.vercel.app/api';
 
 export const stripeService = {
   // Create a payment session

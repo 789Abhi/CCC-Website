@@ -7,7 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 
 // API base URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://custom-craft-component-backend-jf2lgn95v-789abhis-projects.vercel.app/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://custom-craft-component-backend-gmvey1e30-789abhis-projects.vercel.app/api';
 
 const CheckoutForm = ({ plan, isYearly, onSuccess }) => {
   const stripe = useStripe();
