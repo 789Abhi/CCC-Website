@@ -359,12 +359,12 @@ const UserDashboard = () => {
                 <p className="text-n-1 font-medium">{formatDate(user.createdAt)}</p>
               </div>
               <div className="flex items-end gap-3">
-                {user.subscription?.plan === 'basic' && (
+                {(user.subscription?.plan === 'free' || user.subscription?.plan === 'basic') && (
                   <button
                     onClick={() => navigate('/pricing')}
                     className="bg-gradient-to-r from-color-1 to-color-2 text-n-8 px-6 py-2 rounded-lg hover:from-color-1/90 hover:to-color-2/90 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
                   >
-                    Upgrade Plan
+                    {user.subscription?.plan === 'free' ? 'Purchase Plan' : 'Upgrade Plan'}
                   </button>
                 )}
                 <button
@@ -381,17 +381,18 @@ const UserDashboard = () => {
             </div>
           </div>
 
-          {/* Licenses Card */}
-          <div className="bg-n-8/80 backdrop-blur-sm border border-n-6 rounded-2xl shadow-2xl">
-            <div className="px-8 py-6 border-b border-n-6">
-              <h2 className="text-2xl font-semibold text-n-1">Your Licenses</h2>
-              <p className="text-n-2 mt-2">
-                {licenses.length === 0 
-                  ? "Licenses are generated when you purchase a paid plan"
-                  : "Your license keys for paid plans"
-                }
-              </p>
-            </div>
+          {/* Licenses Card - Only show for paid users */}
+          {(user.subscription?.plan !== 'free' && user.subscription?.plan !== 'basic') && (
+            <div className="bg-n-8/80 backdrop-blur-sm border border-n-6 rounded-2xl shadow-2xl">
+              <div className="px-8 py-6 border-b border-n-6">
+                <h2 className="text-2xl font-semibold text-n-1">Your Licenses</h2>
+                <p className="text-n-2 mt-2">
+                  {licenses.length === 0 
+                    ? "Licenses are generated when you purchase a paid plan"
+                    : "Your license keys for paid plans"
+                  }
+                </p>
+              </div>
             
             {loading ? (
               <div className="p-8 text-center">
@@ -482,7 +483,8 @@ const UserDashboard = () => {
                 </table>
               </div>
             )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
 

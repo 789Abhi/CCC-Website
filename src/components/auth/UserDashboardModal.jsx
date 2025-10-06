@@ -137,7 +137,7 @@ const UserDashboardModal = ({ isOpen, onClose }) => {
       {/* Actions */}
       <div className="flex gap-3">
         <Button href="/pricing" className="flex-1" white>
-          Upgrade Plan
+          {user.subscription?.plan === 'free' ? 'Purchase Plan' : 'Upgrade Plan'}
         </Button>
         <Button onClick={handleLogout} className="flex-1">
           Logout
