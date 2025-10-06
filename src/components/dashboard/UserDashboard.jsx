@@ -81,10 +81,19 @@ const UserDashboard = () => {
   // Separate effect for fetching licenses when user data is available
   useEffect(() => {
     if (user && user.id) {
-      console.log('🔍 UserDashboard - User data available, fetching licenses...');
-      fetchLicenses();
+      console.log('🔍 UserDashboard - User data available, checking if should fetch licenses...');
+      console.log('🔍 User subscription plan:', user.subscription?.plan);
+      
+      // Only fetch licenses for paid users (not free users)
+      if (user.subscription?.plan && user.subscription.plan !== 'free') {
+        console.log('🔍 UserDashboard - Paid user detected, fetching licenses...');
+        fetchLicenses();
+      } else {
+        console.log('🔍 UserDashboard - Free user detected, skipping license fetch');
+        setLoading(false);
+      }
     }
-  }, [user?.id]); // Only depend on user.id
+  }, [user?.id, user?.subscription?.plan]); // Depend on user.id and subscription plan
 
   const fetchLicenses = async () => {
     if (!user?.id) {
@@ -191,8 +200,14 @@ const UserDashboard = () => {
           // Add a small delay to ensure backend has processed the payment
           await new Promise(resolve => setTimeout(resolve, 1000));
           await refreshUser(true); // Force refresh with cache busting
-          await fetchLicenses();
-          console.log('✅ User data and licenses refreshed');
+          
+          // Only fetch licenses if user is now on a paid plan
+          if (user?.subscription?.plan && user.subscription.plan !== 'free') {
+            await fetchLicenses();
+            console.log('✅ User data and licenses refreshed');
+          } else {
+            console.log('✅ User data refreshed (no license fetch needed for free plan)');
+          }
         } catch (refreshError) {
           console.error('❌ Error refreshing data:', refreshError);
           // Fallback to page reload if refresh fails
