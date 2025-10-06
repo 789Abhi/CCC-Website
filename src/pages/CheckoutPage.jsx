@@ -386,6 +386,17 @@ const PaymentSuccessPopup = ({ isOpen, onClose, plan }) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      
+      // Automatically redirect to dashboard after showing success message for 2 seconds
+      const redirectTimer = setTimeout(() => {
+        onClose();
+        navigate('/dashboard');
+      }, 2000);
+
+      return () => {
+        clearTimeout(redirectTimer);
+        document.body.style.overflow = 'unset';
+      };
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -393,30 +404,14 @@ const PaymentSuccessPopup = ({ isOpen, onClose, plan }) => {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen]);
+  }, [isOpen, navigate, onClose]);
 
   if (!isOpen) return null;
-
-  const handleGoToDashboard = () => {
-    onClose();
-    navigate('/dashboard');
-  };
-
-  const handleCloseAndNavigate = () => {
-    onClose();
-    // Navigate to dashboard after a short delay to ensure popup closes smoothly
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 300);
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-        onClick={onClose}
-      ></div>
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
       
       {/* Popup */}
       <div className="relative bg-gradient-to-br from-n-8 via-n-7 to-n-6 border border-n-5 rounded-2xl p-8 max-w-md w-full mx-4 transform animate-in fade-in-0 zoom-in-95 duration-300">
@@ -444,20 +439,12 @@ const PaymentSuccessPopup = ({ isOpen, onClose, plan }) => {
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="space-y-3">
-          <button
-            onClick={handleCloseAndNavigate}
-            className="w-full bg-gradient-to-r from-color-1 to-color-2 hover:from-color-1/90 hover:to-color-2/90 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
-          >
-            Go to Dashboard
-          </button>
-          <button
-            onClick={onClose}
-            className="w-full bg-n-6 hover:bg-n-5 text-n-2 font-medium py-3 px-6 rounded-xl transition-all duration-300"
-          >
-            Close
-          </button>
+        {/* Auto-redirect message */}
+        <div className="text-center">
+          <div className="inline-flex items-center space-x-2 text-n-3 text-sm">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-color-1"></div>
+            <span>Redirecting to dashboard...</span>
+          </div>
         </div>
       </div>
     </div>

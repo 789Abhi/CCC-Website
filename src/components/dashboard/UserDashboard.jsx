@@ -199,13 +199,19 @@ const UserDashboard = () => {
         try {
           // Add a small delay to ensure backend has processed the payment
           await new Promise(resolve => setTimeout(resolve, 1000));
-          await refreshUser(true); // Force refresh with cache busting
+          const refreshResult = await refreshUser(true); // Force refresh with cache busting
           
-          // Only fetch licenses if user is now on a paid plan
-          if (user?.subscription?.plan && user.subscription.plan !== 'free') {
+          // Check the refreshed user data to determine if we should fetch licenses
+          const refreshedUser = refreshResult?.user;
+          console.log('🔍 Refreshed user data:', refreshedUser);
+          console.log('🔍 Refreshed user subscription:', refreshedUser?.subscription);
+          
+          if (refreshedUser?.subscription?.plan && refreshedUser.subscription.plan !== 'free') {
+            console.log('🔍 User is now on paid plan, fetching licenses...');
             await fetchLicenses();
             console.log('✅ User data and licenses refreshed');
           } else {
+            console.log('🔍 User is still on free plan, no license fetch needed');
             console.log('✅ User data refreshed (no license fetch needed for free plan)');
           }
         } catch (refreshError) {
