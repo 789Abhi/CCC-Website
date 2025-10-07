@@ -62,10 +62,10 @@ const UserDashboard = () => {
   const [planSynced, setPlanSynced] = useState(false);
 
   // Format date function to display as "7 Oct 2025" - VERSION 2.0
-  const formatDate = (dateString) => {
-    console.log('🔍 formatDate called with:', dateString);
+  const formatDateNew = (dateString) => {
+    console.log('🔍 formatDateNew called with:', dateString);
     if (!dateString) {
-      console.log('🔍 formatDate returning: Never');
+      console.log('🔍 formatDateNew returning: Never');
       return 'Never';
     }
     
@@ -76,7 +76,7 @@ const UserDashboard = () => {
       const year = date.getFullYear();
       
       const result = `${day} ${month} ${year}`;
-      console.log('🔍 formatDate returning:', result);
+      console.log('🔍 formatDateNew returning:', result);
       return result;
     } catch (error) {
       console.error('Error formatting date:', error);
@@ -444,9 +444,9 @@ const UserDashboard = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-n-2 mb-2">Member Since (VERSION 3.0 - NEW FORMAT)</label>
-                <p className="text-n-1 font-medium">{formatDate(user.createdAt)}</p>
+                <p className="text-n-1 font-medium">{formatDateNew(user.createdAt)}</p>
                 {console.log('🔍 Debug - user.createdAt:', user.createdAt)}
-                {console.log('🔍 Debug - formatDate result:', formatDate(user.createdAt))}
+                {console.log('🔍 Debug - formatDateNew result:', formatDateNew(user.createdAt))}
               </div>
               <div className="flex items-end gap-3">
                 {(user.subscription?.plan === 'free' || user.subscription?.plan === 'basic') && (
@@ -559,9 +559,9 @@ const UserDashboard = () => {
                           <span className="text-n-3"> / {license.maxUsage || 0}</span>
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-n-1">
-                          {license.expiresAt ? formatDate(license.expiresAt) : 'Never'}
+                          {license.expiresAt ? formatDateNew(license.expiresAt) : 'Never'}
                           {console.log('🔍 Debug - license.expiresAt:', license.expiresAt)}
-                          {console.log('🔍 Debug - formatDate result:', formatDate(license.expiresAt))}
+                          {console.log('🔍 Debug - formatDateNew result:', formatDateNew(license.expiresAt))}
                         </td>
                       </tr>
                     ))}
