@@ -58,9 +58,13 @@ const UserDashboard = () => {
   const [processingPayment, setProcessingPayment] = useState(false);
   const [planSynced, setPlanSynced] = useState(false);
 
-  // Format date function to display as "7 Oct 2025"
+  // Format date function to display as "7 Oct 2025" - VERSION 2.0
   const formatDate = (dateString) => {
-    if (!dateString) return 'Never';
+    console.log('🔍 formatDate called with:', dateString);
+    if (!dateString) {
+      console.log('🔍 formatDate returning: Never');
+      return 'Never';
+    }
     
     try {
       const date = new Date(dateString);
@@ -68,7 +72,9 @@ const UserDashboard = () => {
       const month = date.toLocaleString('en-US', { month: 'short' });
       const year = date.getFullYear();
       
-      return `${day} ${month} ${year}`;
+      const result = `${day} ${month} ${year}`;
+      console.log('🔍 formatDate returning:', result);
+      return result;
     } catch (error) {
       console.error('Error formatting date:', error);
       return 'Invalid Date';
@@ -434,7 +440,7 @@ const UserDashboard = () => {
                 </span>
               </div>
               <div>
-                <label className="block text-sm font-medium text-n-2 mb-2">Member Since</label>
+                <label className="block text-sm font-medium text-n-2 mb-2">Member Since (NEW FORMAT)</label>
                 <p className="text-n-1 font-medium">{formatDate(user.createdAt)}</p>
                 {console.log('🔍 Debug - user.createdAt:', user.createdAt)}
                 {console.log('🔍 Debug - formatDate result:', formatDate(user.createdAt))}
