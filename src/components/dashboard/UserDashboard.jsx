@@ -199,12 +199,52 @@ const UserDashboard = () => {
         try {
           // Add a small delay to ensure backend has processed the payment
           await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          // First, sync the user subscription to ensure backend data is correct
+          console.log('🔄 Syncing user subscription after payment...');
+          let syncData = null;
+          try {
+            const syncResponse = await axios.post('/stripe/sync-user-subscription', {
+              userId: user.id
+            });
+            console.log('✅ User subscription synced:', syncResponse.data);
+            syncData = syncResponse.data;
+          } catch (syncError) {
+            console.error('❌ Error syncing user subscription:', syncError);
+            // Continue with refresh even if sync fails
+          }
+          
           const refreshResult = await refreshUser(true); // Force refresh with cache busting
           
           // Check the refreshed user data to determine if we should fetch licenses
-          const refreshedUser = refreshResult?.user;
+          let refreshedUser = refreshResult?.user;
           console.log('🔍 Refreshed user data:', refreshedUser);
           console.log('🔍 Refreshed user subscription:', refreshedUser?.subscription);
+          
+          // If sync was successful but refresh didn't pick up the changes, update locally
+          if (syncData && syncData.success && refreshedUser) {
+            const expectedPlan = syncData.plan;
+            const expectedIsPro = syncData.isPro;
+            
+            if (refreshedUser.subscription?.plan !== expectedPlan) {
+              console.log('⚠️ Plan mismatch detected. Updating user data locally...');
+              console.log('🔍 Expected plan:', expectedPlan, 'Actual plan:', refreshedUser.subscription?.plan);
+              
+              // Update user data locally
+              const updatedUser = {
+                ...refreshedUser,
+                subscription: {
+                  ...refreshedUser.subscription,
+                  plan: expectedPlan,
+                  isPro: expectedIsPro
+                }
+              };
+              
+              setUser(updatedUser);
+              refreshedUser = updatedUser;
+              console.log('✅ User data updated locally to:', expectedPlan);
+            }
+          }
           
           if (refreshedUser?.subscription?.plan && refreshedUser.subscription.plan !== 'free') {
             console.log('🔍 User is now on paid plan, fetching licenses...');
