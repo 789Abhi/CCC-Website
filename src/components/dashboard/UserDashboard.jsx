@@ -186,68 +186,6 @@ const UserDashboard = () => {
     }
   };
 
-  const handleManualSync = async () => {
-    try {
-      setProcessingPayment(true);
-      console.log('🔄 Manual sync requested by user...');
-      
-      // Call sync endpoint to ensure backend data is correct
-      let syncData = null;
-      try {
-        const syncResponse = await axios.post('/stripe/sync-user-subscription', {
-          userId: user.id
-        });
-        console.log('✅ User subscription synced:', syncResponse.data);
-        syncData = syncResponse.data;
-        showSuccess('Subscription synced successfully!');
-      } catch (syncError) {
-        console.error('❌ Error syncing user subscription:', syncError);
-        setError('Failed to sync subscription. Please try again.');
-        return;
-      }
-      
-      // Refresh user data
-      const refreshResult = await refreshUser(true);
-      let refreshedUser = refreshResult?.user;
-      
-      // If sync was successful but refresh didn't pick up the changes, update locally
-      if (syncData && syncData.success && refreshedUser) {
-        const expectedPlan = syncData.plan;
-        const expectedIsPro = syncData.isPro;
-        
-        if (refreshedUser.subscription?.plan !== expectedPlan) {
-          console.log('⚠️ Plan mismatch detected. Updating user data locally...');
-          
-          // Update user data locally
-          const updatedUser = {
-            ...refreshedUser,
-            subscription: {
-              ...refreshedUser.subscription,
-              plan: expectedPlan,
-              isPro: expectedIsPro
-            }
-          };
-          
-          setUser(updatedUser);
-          console.log('✅ User data updated locally to:', expectedPlan);
-          showSuccess(`Subscription updated to ${expectedPlan.toUpperCase()} plan!`);
-        } else {
-          showSuccess('Subscription is already up to date!');
-        }
-      }
-      
-      // Fetch licenses if user is on a paid plan
-      if (refreshedUser?.subscription?.plan && refreshedUser.subscription.plan !== 'free') {
-        await fetchLicenses();
-      }
-      
-    } catch (error) {
-      console.error('❌ Error in manual sync:', error);
-      setError('Failed to sync subscription. Please try again.');
-    } finally {
-      setProcessingPayment(false);
-    }
-  };
 
   const processPayment = async (sessionId) => {
     try {
@@ -492,13 +430,6 @@ const UserDashboard = () => {
                   </button>
                 )}
                 <button
-                  onClick={handleManualSync}
-                  disabled={processingPayment}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-sm"
-                >
-                  {processingPayment ? 'Syncing...' : 'Sync Subscription'}
-                </button>
-                <button
                   onClick={() => {
                     logout();
                     showSuccess('You have been successfully logged out.');
@@ -512,15 +443,15 @@ const UserDashboard = () => {
             </div>
           </div>
 
-          {/* Licenses Card - Only show for paid users */}
-          {(user.subscription?.plan !== 'free' && user.subscription?.plan !== 'basic') && (
+          {/* Licenses Card - Show for all paid users (including basic plan) */}
+          {(user.subscription?.plan !== 'free') && (
             <div className="bg-n-8/80 backdrop-blur-sm border border-n-6 rounded-2xl shadow-2xl">
               <div className="px-8 py-6 border-b border-n-6">
                 <h2 className="text-2xl font-semibold text-n-1">Your Licenses</h2>
                 <p className="text-n-2 mt-2">
                   {licenses.length === 0 
-                    ? "Licenses are generated when you purchase a paid plan"
-                    : "Your license keys for paid plans"
+                    ? "Your license will be generated automatically"
+                    : "Your license key for accessing premium features"
                   }
                 </p>
               </div>
