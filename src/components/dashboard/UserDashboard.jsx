@@ -48,9 +48,6 @@ class ErrorBoundary extends React.Component {
 }
 
 const UserDashboard = () => {
-  // CACHE BUST VERSION 3.0 - FORCE RELOAD
-  console.log('🚀 UserDashboard VERSION 3.0 LOADED - CACHE BUST');
-  
   const { user, logout, loading: authLoading, refreshUser, setUser } = useAuth();
   const { showSuccess } = useModal();
   const navigate = useNavigate();
@@ -61,13 +58,9 @@ const UserDashboard = () => {
   const [processingPayment, setProcessingPayment] = useState(false);
   const [planSynced, setPlanSynced] = useState(false);
 
-  // Format date function to display as "7 Oct 2025" - VERSION 2.0
+  // Format date function to display as "7 Oct 2025"
   const formatDateNew = (dateString) => {
-    console.log('🔍 formatDateNew called with:', dateString);
-    if (!dateString) {
-      console.log('🔍 formatDateNew returning: Never');
-      return 'Never';
-    }
+    if (!dateString) return 'Never';
     
     try {
       const date = new Date(dateString);
@@ -75,9 +68,7 @@ const UserDashboard = () => {
       const month = date.toLocaleString('en-US', { month: 'short' });
       const year = date.getFullYear();
       
-      const result = `${day} ${month} ${year}`;
-      console.log('🔍 formatDateNew returning:', result);
-      return result;
+      return `${day} ${month} ${year}`;
     } catch (error) {
       console.error('Error formatting date:', error);
       return 'Invalid Date';
@@ -443,10 +434,8 @@ const UserDashboard = () => {
                 </span>
               </div>
               <div>
-                <label className="block text-sm font-medium text-n-2 mb-2">Member Since (VERSION 3.0 - NEW FORMAT)</label>
+                <label className="block text-sm font-medium text-n-2 mb-2">Member Since</label>
                 <p className="text-n-1 font-medium">{formatDateNew(user.createdAt)}</p>
-                {console.log('🔍 Debug - user.createdAt:', user.createdAt)}
-                {console.log('🔍 Debug - formatDateNew result:', formatDateNew(user.createdAt))}
               </div>
               <div className="flex items-end gap-3">
                 {(user.subscription?.plan === 'free' || user.subscription?.plan === 'basic') && (
@@ -560,8 +549,6 @@ const UserDashboard = () => {
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-n-1">
                           {license.expiresAt ? formatDateNew(license.expiresAt) : 'Never'}
-                          {console.log('🔍 Debug - license.expiresAt:', license.expiresAt)}
-                          {console.log('🔍 Debug - formatDateNew result:', formatDateNew(license.expiresAt))}
                         </td>
                       </tr>
                     ))}
