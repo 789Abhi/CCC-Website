@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useModal } from '../../contexts/ModalContext';
 import Button from '../Button';
-import GoogleAuthButton from '../GoogleAuthButton';
 
 const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
@@ -60,18 +59,6 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
     }
   };
 
-  const handleGoogleSuccess = (user) => {
-    showSuccess('Welcome to Custom Craft Components! You have successfully registered with Google.');
-    
-    // Close modal after a short delay to ensure user sees the success message
-    setTimeout(() => {
-      onClose();
-    }, 1000);
-  };
-
-  const handleGoogleError = (error) => {
-    setError(error);
-  };
 
   return (
     <div className="space-y-6">
@@ -221,22 +208,6 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
         </Button>
       </form>
 
-      {/* Divider */}
-      <div className="relative my-4">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-n-6"></div>
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-n-8 text-n-2">Or continue with</span>
-        </div>
-      </div>
-
-      {/* Google OAuth Button */}
-      <GoogleAuthButton
-        onSuccess={handleGoogleSuccess}
-        onError={handleGoogleError}
-        className="mb-4"
-      />
 
       <div className="text-center">
         <p className="text-n-2 text-sm">

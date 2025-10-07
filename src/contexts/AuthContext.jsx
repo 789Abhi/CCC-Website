@@ -108,46 +108,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const loginWithGoogle = async (credential) => {
-    try {
-      console.log('🔐 Frontend Google OAuth attempt');
-      
-      const response = await axios.post('/auth/google', { 
-        credential 
-      });
-      
-      if (response.data.success) {
-        const { token: newToken, user: userData } = response.data;
-        
-        // Store token and remember me preference (Google OAuth always remembers)
-        localStorage.setItem('token', newToken);
-        localStorage.setItem('rememberMe', 'true');
-        
-        setToken(newToken);
-        setUser(userData);
-        setRememberMe(true);
-        
-        console.log('✅ Google OAuth successful:', userData.email);
-        return { success: true, user: userData };
-      } else {
-        return { success: false, message: response.data.message };
-      }
-    } catch (error) {
-      console.error('❌ Frontend Google OAuth error:', error);
-      
-      // Handle rate limiting specifically
-      if (error.response?.status === 429) {
-        const retryAfter = error.response.headers['retry-after'] || 60;
-        return { 
-          success: false, 
-          message: `Too many requests. Please wait ${retryAfter} seconds before trying again.` 
-        };
-      }
-      
-      const message = error.response?.data?.message || 'Google authentication failed';
-      return { success: false, message };
-    }
-  };
 
   const register = async (firstName, lastName, email, password) => {
     try {
@@ -259,7 +219,6 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     login,
-    loginWithGoogle,
     register,
     logout,
     refreshUser,

@@ -4,7 +4,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { useModal } from '../contexts/ModalContext';
 import Button from '../components/Button';
 import Header from '../components/Header';
-import GoogleAuthButton from '../components/GoogleAuthButton';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -60,19 +59,6 @@ const LoginPage = () => {
     }
   };
 
-  const handleGoogleSuccess = (user) => {
-    setSuccess(true);
-    showSuccess('🎉 Google login successful! Welcome back!');
-    
-    // Redirect to dashboard after 1.5 seconds
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 1500);
-  };
-
-  const handleGoogleError = (error) => {
-    setError(error);
-  };
 
   return (
     <div className="min-h-screen bg-n-8 relative overflow-hidden">
@@ -201,22 +187,6 @@ const LoginPage = () => {
               </Button>
             </form>
 
-            {/* Divider */}
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-n-6"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-n-8 text-n-2">Or continue with</span>
-              </div>
-            </div>
-
-            {/* Google OAuth Button */}
-            <GoogleAuthButton
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              className="mb-6"
-            />
 
             <div className="text-center mt-6">
               <p className="text-n-2 text-sm">
