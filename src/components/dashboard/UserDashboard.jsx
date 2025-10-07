@@ -48,6 +48,9 @@ class ErrorBoundary extends React.Component {
 }
 
 const UserDashboard = () => {
+  // CACHE BUST VERSION 3.0 - FORCE RELOAD
+  console.log('🚀 UserDashboard VERSION 3.0 LOADED - CACHE BUST');
+  
   const { user, logout, loading: authLoading, refreshUser, setUser } = useAuth();
   const { showSuccess } = useModal();
   const navigate = useNavigate();
@@ -440,7 +443,7 @@ const UserDashboard = () => {
                 </span>
               </div>
               <div>
-                <label className="block text-sm font-medium text-n-2 mb-2">Member Since (NEW FORMAT)</label>
+                <label className="block text-sm font-medium text-n-2 mb-2">Member Since (VERSION 3.0 - NEW FORMAT)</label>
                 <p className="text-n-1 font-medium">{formatDate(user.createdAt)}</p>
                 {console.log('🔍 Debug - user.createdAt:', user.createdAt)}
                 {console.log('🔍 Debug - formatDate result:', formatDate(user.createdAt))}
