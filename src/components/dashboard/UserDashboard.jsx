@@ -504,9 +504,6 @@ const UserDashboard = () => {
                       <th className="px-8 py-4 text-left text-sm font-medium text-n-2 uppercase tracking-wider">
                         Expires
                       </th>
-                      <th className="px-8 py-4 text-left text-sm font-medium text-n-2 uppercase tracking-wider">
-                        Last Used
-                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-n-6">
@@ -535,9 +532,6 @@ const UserDashboard = () => {
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-n-1">
                           {license.expiresAt ? formatDate(license.expiresAt) : 'Never'}
-                        </td>
-                        <td className="px-8 py-4 whitespace-nowrap text-sm text-n-1">
-                          {license.lastUsed ? formatDate(license.lastUsed) : 'Never'}
                         </td>
                       </tr>
                     ))}
