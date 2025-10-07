@@ -436,6 +436,8 @@ const UserDashboard = () => {
               <div>
                 <label className="block text-sm font-medium text-n-2 mb-2">Member Since</label>
                 <p className="text-n-1 font-medium">{formatDate(user.createdAt)}</p>
+                {console.log('🔍 Debug - user.createdAt:', user.createdAt)}
+                {console.log('🔍 Debug - formatDate result:', formatDate(user.createdAt))}
               </div>
               <div className="flex items-end gap-3">
                 {(user.subscription?.plan === 'free' || user.subscription?.plan === 'basic') && (
@@ -549,6 +551,8 @@ const UserDashboard = () => {
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-n-1">
                           {license.expiresAt ? formatDate(license.expiresAt) : 'Never'}
+                          {console.log('🔍 Debug - license.expiresAt:', license.expiresAt)}
+                          {console.log('🔍 Debug - formatDate result:', formatDate(license.expiresAt))}
                         </td>
                       </tr>
                     ))}
