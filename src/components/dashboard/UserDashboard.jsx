@@ -186,6 +186,69 @@ const UserDashboard = () => {
     }
   };
 
+  const handleManualSync = async () => {
+    try {
+      setProcessingPayment(true);
+      console.log('🔄 Manual sync requested by user...');
+      
+      // Call sync endpoint to ensure backend data is correct
+      let syncData = null;
+      try {
+        const syncResponse = await axios.post('/stripe/sync-user-subscription', {
+          userId: user.id
+        });
+        console.log('✅ User subscription synced:', syncResponse.data);
+        syncData = syncResponse.data;
+        showSuccess('Subscription synced successfully!');
+      } catch (syncError) {
+        console.error('❌ Error syncing user subscription:', syncError);
+        setError('Failed to sync subscription. Please try again.');
+        return;
+      }
+      
+      // Refresh user data
+      const refreshResult = await refreshUser(true);
+      let refreshedUser = refreshResult?.user;
+      
+      // If sync was successful but refresh didn't pick up the changes, update locally
+      if (syncData && syncData.success && refreshedUser) {
+        const expectedPlan = syncData.plan;
+        const expectedIsPro = syncData.isPro;
+        
+        if (refreshedUser.subscription?.plan !== expectedPlan) {
+          console.log('⚠️ Plan mismatch detected. Updating user data locally...');
+          
+          // Update user data locally
+          const updatedUser = {
+            ...refreshedUser,
+            subscription: {
+              ...refreshedUser.subscription,
+              plan: expectedPlan,
+              isPro: expectedIsPro
+            }
+          };
+          
+          setUser(updatedUser);
+          console.log('✅ User data updated locally to:', expectedPlan);
+          showSuccess(`Subscription updated to ${expectedPlan.toUpperCase()} plan!`);
+        } else {
+          showSuccess('Subscription is already up to date!');
+        }
+      }
+      
+      // Fetch licenses if user is on a paid plan
+      if (refreshedUser?.subscription?.plan && refreshedUser.subscription.plan !== 'free') {
+        await fetchLicenses();
+      }
+      
+    } catch (error) {
+      console.error('❌ Error in manual sync:', error);
+      setError('Failed to sync subscription. Please try again.');
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
   const processPayment = async (sessionId) => {
     try {
       setProcessingPayment(true);
@@ -428,6 +491,13 @@ const UserDashboard = () => {
                     {user.subscription?.plan === 'free' ? 'Purchase Plan' : 'Upgrade Plan'}
                   </button>
                 )}
+                <button
+                  onClick={handleManualSync}
+                  disabled={processingPayment}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-sm"
+                >
+                  {processingPayment ? 'Syncing...' : 'Sync Subscription'}
+                </button>
                 <button
                   onClick={() => {
                     logout();
