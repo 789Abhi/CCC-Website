@@ -58,6 +58,23 @@ const UserDashboard = () => {
   const [processingPayment, setProcessingPayment] = useState(false);
   const [planSynced, setPlanSynced] = useState(false);
 
+  // Format date function to display as "7 Oct 2025"
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Never';
+    
+    try {
+      const date = new Date(dateString);
+      const day = date.getDate();
+      const month = date.toLocaleString('en-US', { month: 'short' });
+      const year = date.getFullYear();
+      
+      return `${day} ${month} ${year}`;
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid Date';
+    }
+  };
+
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
