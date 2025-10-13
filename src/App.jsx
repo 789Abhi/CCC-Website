@@ -26,9 +26,7 @@ import PricingPlans from "./components/pricing/PricingPlans";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import PricingPage from "./pages/PricingPage";
-import CheckoutPage from "./pages/CheckoutPage";
-import PricingList from './components/PricingList';
-import { useAuth } from './contexts/AuthContext';
+import DocumentationPage from "./pages/DocumentationPage";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -99,16 +97,11 @@ const App = () => {
           <SuccessMessage />
         </ProtectedRoute>
       } />
-      <Route path="/pricing" element={
+      <Route path="/documentation" element={
         <>
-          <PricingPage />
+          <DocumentationPage />
           <SuccessMessage />
         </>
-      } />
-      <Route path="/checkout" element={
-        <ProtectedRoute>
-          <CheckoutPage />
-        </ProtectedRoute>
       } />
     </Routes>
   );
