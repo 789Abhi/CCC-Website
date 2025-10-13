@@ -26,7 +26,7 @@ const DocumentationPage = () => {
 
       <Header />
 
-      <div className="relative z-10 px-4 py-[100px]">
+      <div className="relative z-10 px-4 py-[200px]">
         <div className="max-w-6xl mx-auto">
           {/* Header Section */}
           <div className="text-center mb-16">
