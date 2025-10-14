@@ -28,6 +28,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import PricingPage from "./pages/PricingPage";
 import DocumentationPage from "./pages/DocumentationPage";
+import CheckoutPage from "./pages/CheckoutPage";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -95,6 +96,12 @@ const App = () => {
       <Route path="/dashboard" element={
         <ProtectedRoute>
           <UserDashboard />
+          <SuccessMessage />
+        </ProtectedRoute>
+      } />
+      <Route path="/checkout" element={
+        <ProtectedRoute>
+          <CheckoutPage />
           <SuccessMessage />
         </ProtectedRoute>
       } />
