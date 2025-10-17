@@ -97,22 +97,26 @@ const Header = () => {
                   e.preventDefault();
                   handleClick();
                   
-                  // If not on home page, navigate to home page first
-                  if (!isOnHomePage) {
-                    navigate('/');
-                    // Wait for navigation to complete, then scroll to section
-                    setTimeout(() => {
-                      scrollToSection(item.url);
-                    }, 100);
+                  if (item.isRoute) {
+                    navigate(item.url);
                   } else {
-                    // If on home page, scroll directly to section
-                    scrollToSection(item.url);
+                    // If not on home page, navigate to home page first
+                    if (!isOnHomePage) {
+                      navigate('/');
+                      // Wait for navigation to complete, then scroll to section
+                      setTimeout(() => {
+                        scrollToSection(item.url);
+                      }, 100);
+                    } else {
+                      // If on home page, scroll directly to section
+                      scrollToSection(item.url);
+                    }
                   }
                 }}
                 className={`block relative font-code text-2xl uppercase text-n-1 transition-colors hover:text-color-1 ${
                   item.onlyMobile && "lg:hidden"
                 } px-6 py-6 md:py-8 lg:mr-0.25 lg:text-xs lg:font-semibold ${
-                  item.url === pathname.hash
+                  (item.isRoute ? pathname.pathname === item.url : item.url === pathname.hash)
                     ? "z-2 lg:text-n-1"
                     : "lg:text-n-1/50"
                 } lg:leading-5 lg:hover:text-n-1 xl:px-12`}

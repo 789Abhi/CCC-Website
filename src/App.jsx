@@ -13,6 +13,7 @@ import Services from "./components/Services";
 import Comparison from "./components/Comparison";
 import WordPressDemo from "./components/WordPressDemo";
 import MeetAbhishekFloatingIcon from "./components/MeetAbhishekFloatingIcon";
+import DocumentationFloatingIcon from "./components/DocumentationFloatingIcon";
 import ModalContainer from "./components/ModalContainer";
 import SuccessMessage from "./components/SuccessMessage";
 import HomePricing from "./components/HomePricing";
@@ -75,6 +76,7 @@ const App = () => {
           <ModalContainer />
           <SuccessMessage />
           <MeetAbhishekFloatingIcon />
+          <DocumentationFloatingIcon />
         </>
       } />
       
@@ -109,6 +111,8 @@ const App = () => {
         <>
           <DocumentationPage />
           <SuccessMessage />
+          <MeetAbhishekFloatingIcon />
+          <DocumentationFloatingIcon />
         </>
       } />
     </Routes>
