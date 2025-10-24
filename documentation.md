@@ -10,373 +10,242 @@
  * $title = get_ccc_field('title') - Get field value
  */
 
-$enable_title = get_ccc_field('toogle');
+// Text
 $title = get_ccc_field('title');
+
+// Text Area
 $text_area = get_ccc_field('text_area');
-$image = get_ccc_field('image');
-$video = get_ccc_field('video');
-$oembded = get_ccc_field('oembded');
-$link_target = get_ccc_field_target('link');
-$link = get_ccc_field('link');
+
+// Email
 $email = get_ccc_field('email');
+
+// Number
 $number = get_ccc_field('number');
-$range = get_ccc_field('range');
-$file = get_ccc_field('file');
-$color = get_ccc_field('color');
+
+// Link
+$link = get_ccc_field('link');
+$link_target = get_ccc_field_target('link');
+
+// Select
 $select = get_ccc_field('select');
-$main_color = get_ccc_field_color('color');
-$hover_color = get_ccc_field_hover_color('color');
-$adjusted_color = get_ccc_field_adjusted_color('color');
-$select_string = get_ccc_select_values('select', null, null, 'string');
-$select_list = get_ccc_select_values('select', null, null, 'list');
-$gallery = get_ccc_field('gallery');
+$multi_select_list = get_ccc_select_values('select', null, null, 'list');
+$multi_select_string = get_ccc_select_values('select', null, null, 'string');
+$multi_select_string_array = get_ccc_select_values('select', null, null, 'array');
+
+// Checkbox  
 $checkbox = get_ccc_field('checkbox');
 $checkbox_string = get_ccc_select_values('checkbox', null, null, 'string');
 $checkbox_list = get_ccc_select_values('checkbox', null, null, 'list');
+
+// Radio
 $radio = get_ccc_field('radio');
 
-$users = get_ccc_field_user('user', null, null, null, 'display');
-$user_names = get_ccc_field_user('user', null, null, null, 'names');
+// Toggle
+$toggle = get_ccc_field('toggle');
 
+// color
+$color = get_ccc_field('color');
+$main_color = get_ccc_field_color('color');
+$hover_color = get_ccc_field_hover_color('color');
+$adjusted_color = get_ccc_field_adjusted_color('color');
+
+// Range
+$range = get_ccc_field('range');
+
+// Date
+$date_value = get_ccc_field('date');
+
+// File
+$file = get_ccc_field('file');
+
+// Wiysiwyg Editor
+$wysiwyg = get_ccc_field('wysiwyg_editor');
+
+// Oembedded 
+$oembded = get_ccc_field('oembded');
+
+// Realtionship
+$related_posts = get_ccc_field('realtionship');
+
+// Image
+$image = get_ccc_field('image');
+
+// Video
+$video = get_ccc_field('video');
+
+// Repeater
+$repeater = get_ccc_field('repeater');
+
+// Gallery
 $gallery = get_ccc_field('gallery');
 
-// Get a single date value
-$date_value = get_ccc_field('field_name', $post_id, $instance_id);
-
-// Or using the specific method
-$date_field = new CCC\Fields\DateField('Event Date', 'event_date', 'component_1');
-$date_value = $date_field->get_ccc_field_date($post_id, $instance_id);
-
-//Returns: Formatted date string (e.g., "2025-09-22", "22/09/2025", "September 22, 2025")
+?>
 
 
-// Get date and time together
-$datetime_value = get_ccc_field('field_name', $post_id, $instance_id);
+<?php if ($toggle) { ?>
+    <section class="p-6">
+        <h1><?php echo esc_html($title); ?></h1>
+        <p><?php echo esc_html($text_area); ?></p>
+        <p><?php echo esc_html($email); ?></p>
+        <p><?php echo esc_html($number); ?></p>
+        <a href="<?php echo $link ?>">Normal Link</a> <!--  Normal Link --> <br>
 
-// Or using the specific method
-$datetime_field = new CCC\Fields\DateField('Event DateTime', 'event_datetime', 'component_1');
-$datetime_value = $datetime_field->get_ccc_field_datetime($post_id, $instance_id);
-
-// Returns: Formatted datetime string (e.g., "2025-09-22 14:30:00", "22/09/2025 2:30 PM")
-
-
-// Get time only
-$time_value = get_ccc_field('field_name', $post_id, $instance_id);
-
-// Or using the specific method
-$time_field = new CCC\Fields\DateField('Event Time', 'event_time', 'component_1');
-$time_value = $time_field->get_ccc_field_time($post_id, $instance_id);
-
-// Returns: Formatted time string (e.g., "14:30:00", "2:30 PM")
+        <a href="<?php echo esc_url($link_target['url']); ?>" <?php echo $link_target['target']; ?> class="btn btn-primary">
+            Target Link
+        </a> <!--  Link With Target Link -->
 
 
-// Get time range
-$time_range = get_ccc_field('field_name', $post_id, $instance_id);
+        <p> Single Select : <?php echo $select; ?></p>
 
-// Or using the specific method
-$time_range_field = new CCC\Fields\DateField('Event Time Range', 'event_time_range', 'component_1');
-$time_range = $time_range_field->get_ccc_field_time_range($post_id, $instance_id);
+        <p>Multi Select List : <?php echo $multi_select_list; ?></p>
 
-// [
-//     'from' => '09:00:00',        // Start time
-//     'to' => '17:00:00',          // End time  
-//     'duration' => '8 hours'      // Calculated duration
-// ]
+        <p>Multi Select String : <?php echo $multi_select_string; ?></p>
 
-// Get date range
-$date_range = get_ccc_field('field_name', $post_id, $instance_id);
+        <!-- select through Foreach -->
+        <select class="form-select">
+            <?php foreach ($select as $option): ?>
+                <option value="<?php echo esc_attr($option); ?>" <?php selected($layout_style, $option); ?>>
+                    <?php echo esc_html($option); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
 
-// Or using the specific method
-$date_range_field = new CCC\Fields\DateField('Event Date Range', 'event_date_range', 'component_1');
-$date_range = $date_range_field->get_ccc_field_date_range($post_id, $instance_id);
+        <!-- Checkbox -->
 
-// [
-//     'from' => '2025-09-22',      // Start date
-//     'to' => '2025-09-25',        // End date
-//     'duration_days' => 4         // Number of days (inclusive)
-// ]
-<div>
-    <?php echo $enable_title; ?>
-</div>
-<?php if ($enable_title) : ?>
-    <h1><?php echo esc_html($title); ?></h1>
-<?php endif; ?>
-<h1><?php echo esc_html($text_area); ?></h1>
-<img src="<?php echo esc_url($image); ?>" alt="<?php echo esc_attr($title); ?>">
+        <ul class="features-list">
+            selected features:
+            <?php foreach ($checkbox as $feature): ?>
+                <li class="feature-item"><?php echo esc_html($feature); ?></li>
+            <?php endforeach; ?>
+        </ul>
 
-<div>
-    <video controls>
-        <source src="<?php echo esc_url($video); ?>" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
+        <div>
+            checkbox_string
+            <?php echo esc_html($checkbox_string); ?>
+        </div>
 
-    <div>
-        <?php echo get_ccc_field_video('video'); ?>
-    </div>
-</div>
+        <div>
+            checkbox_list
+            <?php echo ($checkbox_list); ?>
+        </div>
 
-<div>
-    <?php echo $oembded; ?>
-</div>
-<!-- Opening in a new tab through target  get_ccc_field_target -->
-<div>
-    <a href="<?php echo esc_url($link); ?>">About Normal </a>
-</div>
+        <div>
+            Radio
+            <?php echo esc_html($radio); ?>
+        </div>
 
+        <h2>Normal Color Through style</h2>
+        <div class="w-10 h-10 color_field">
+        </div>
 
-<!-- Opening in a new tab through target  get_ccc_field_target -->
-<div>
-    <a href="<?php echo esc_url($link_target['url']); ?>" <?php echo $link_target['target']; ?>>About Target</a>
-</div>
+        <div class="w-10 h-10 adjusted_color">
+        </div>
 
-<div>
-    <a href="mailto:<?php echo esc_attr($email); ?>">Email Us</a>
-</div>
+        <!-- Range -->
 
+        <div>
+            Range Value: <?php echo ($range); ?>
+        </div>
 
-<div>
-    <a style="font-size:<?php echo esc_attr($range); ?>px" href="tel:<?php echo esc_attr($number); ?>">Call Us</a>
-</div>
+        <!-- Date -->
+        <div>
+            Date Value: <?php echo esc_html($date_value); ?>
+        </div>
 
+        <!-- File -->
+        <div>
+            <a href="<?php echo $file ?>">Download File</a>
+        </div>
 
-<div>
-    <?php echo esc_html($range); ?>
-</div>
+        <!-- Wiysiwyg  -->
 
-<div>
-    <a class="text_color" target="_blank" href="<?php echo esc_url($file); ?>">Download a File</a>
-</div>
-<div>
-    <a style="color:<?php echo esc_attr($hover_color); ?>;" target="_blank"
-        href="<?php echo esc_url($file); ?>">Download a File</a>
-</div>
+        <div>
+            <?php echo $wysiwyg; ?>
+        </div>
 
-<div>
-    <?php echo $file ?>
-</div>
-<div>
-    select
-    <?php echo $select ?>
-</div>
-<div>
-    select string
-    <?php echo $select_string ?>
-</div>
-<div>
-   select_list
-    <?php echo $select_list ?>
-</div>
-<div>
-   select_array
-    <?php 
-    if (is_array($select)) {
-        foreach ($select as $value) {
-            echo esc_html($value) . ' ';
-        }
-    } else {
-        echo esc_html($select);
-    }
-    ?>
-</div>
+        <!-- Oemded -->
+        <div>
+            <?php echo $oembded; ?>
+        </div>
 
-<ul>
-    <?php foreach ($select as $value): ?>
-        <li><?php echo esc_html($value); ?></li>
-    <?php endforeach; ?>
-</ul>
+        <!-- Realtionship -->
+
+        <div class="related-posts">
+            <?php foreach ($related_posts as $post_id): ?>
+                <?php $post = get_post($post_id); ?>
+                <article class="related-post">
+                    <h3><a href="<?php echo get_permalink($post); ?>"><?php echo esc_html($post->post_title); ?></a></h3>
+                    <p><?php echo esc_html(get_the_excerpt($post)); ?></p>
+                </article>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Image -->
+        <img class="w-20 h-20" src="<?php echo $image ?>" alt="">
+
+        <!-- Video -->
+        <video controls src="<?php echo $video ?>"></video>
 
 
-<ul>
-    checkbox value
-    <?php foreach ($checkbox as $values): ?>
-        <li><?php echo esc_html($values); ?></li>
-    <?php endforeach; ?>
-</ul>
+        <div>
+            <?php echo get_ccc_field_video('video'); ?>
+        </div>
 
-<div>
-    checkbox_string
-    <?php echo esc_html($checkbox_string); ?>
-</div>
-
-<div>
-    checkbox_list
-    <?php echo ($checkbox_list); ?>
-</div>
-
-<div>
-    checkbox_array
-    <?php 
-    if (is_array($checkbox)) {
-        foreach ($checkbox as $value) {
-            echo esc_html($value) . ' ';
-        }
-    } else {
-        echo esc_html($checkbox);
-    }
-    ?>
-</div>
-
-<div>
-    <?php echo esc_html($radio); ?>
-</div>
-
-
-<div class="gallery">
-    <?php if ($gallery && is_array($gallery)) : ?>
-        <?php foreach ($gallery as $gallery_item) : ?>
-            <?php 
-            // Fetch the nested fields from each gallery item
-            // Note: show is "1" or "0" (string), not boolean
-            $show_image = isset($gallery_item['show']) && $gallery_item['show'] === "1";
-            $image_url = isset($gallery_item['image']) ? $gallery_item['image'] : null;
-            ?>
-            <?php if ($show_image && $image_url) : ?>
-                <div class="gallery-item">
-                    <img src="<?php echo esc_url($image_url); ?>" 
-                         alt="Gallery Image">
-                </div>
-            <?php endif; ?>
-        <?php endforeach; ?>
-    <?php else : ?>
-        <p>No gallery data or gallery is not an array</p>
-        <p>Type: <?php echo gettype($gallery); ?></p>
-        <p>Value: <?php echo esc_html(print_r($gallery, true)); ?></p>
-    <?php endif; ?>
-</div>
-
-
-<div class="gallery-item">
-    <?php 
-    foreach($gallery as $idx ) :?>
-      <div class="">
-        <img src="<?php echo esc_url($idx['image']); ?>" alt="Gallery Image">
-      </div>
-    <?php endforeach; ?>
-
-</div>
-
-
-<?php
-foreach ($users as $user) {
-    echo "<div class='user-card'>";
-    echo "<img src='{$user['avatar']}' alt='{$user['name']}'>";
-    echo "<h3>{$user['name']}</h3>";
-    echo "<p>{$user['email']}</p>";
-    echo "</div>";
-}
-
-echo implode(', ', $user_names);
-
-
- <section class="hero-section">
-        <div class="container">
-            <?php if ( ! empty( $gallery ) && is_array( $gallery ) ) : ?>
-                <div class="hero-gallery grid grid-cols-3 gap-4">
-                    <?php foreach ( $gallery as $image ) : ?>
-                        <img class="w-full h-[200px] object-cover" src="<?php echo esc_url( $image['url'] ); ?>" alt="<?php echo esc_attr( $image['alt'] ); ?>">
+        <!-- Repeater -->
+        <div>
+            <?php if ($repeater): ?>
+                <div class="gallery flex gap-2 p-5">
+                    <?php foreach ($repeater as $idx): ?>
+                        <div class="flex flex-col">
+                            <img src="<?php echo esc_url($idx['image']); ?>" alt="Gallery Image" class="gallery-image w-40 h-40" />
+                            <h3><?php echo $idx['heading'] ?></h3>
+                        </div>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
         </div>
+
+        <!-- Gallery -->
+        <div class="container">
+            <?php if (!empty($gallery) && is_array($gallery)): ?>
+                <div class="hero-gallery grid grid-cols-3 gap-4">
+                    <?php foreach ($gallery as $image): ?>
+                        <img class="w-full h-[200px] object-cover" src="<?php echo esc_url($image['url']); ?>"
+                            alt="<?php echo esc_attr($image['alt']); ?>">
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+
+
     </section>
-
-    <section>
-        <div class="container mt-6">
-            <?php if ( ! empty( $event_date ) ) : ?>
-                <div class="event-date">
-                    <p><?php echo esc_html( $event_date ); ?></p>
-                </div>
-            <?php endif; ?>
-        </div>
-        <div class="container mt-6">
-            <?php if ( ! empty( $event_datetime ) ) : ?>
-                <div class="event-datetime">
-                    <p><?php echo esc_html( $event_datetime ); ?></p>
-                </div>
-            <?php endif; ?>
-        </div>
-        <div class="container mt-6">
-            <?php if ( ! empty( $event_time ) ) : ?>
-                <div class="event-time">    
-                    <p><?php echo esc_html( $event_time ); ?></p>
-                </div>
-            <?php endif; ?>
-        </div>
-        <div class="container mt-6">
-            <?php if ( ! empty( $event_duration ) && is_array( $event_duration ) ) : ?>
-                <div class="event-duration">    
-                    <p>From: <?php echo esc_html( $event_duration['from'] ); ?> To: <?php echo esc_html( $event_duration['to'] ); ?> (Duration: <?php echo esc_html( $event_duration['duration'] ); ?>)</p>
-                </div>
-            <?php endif; ?>
-        </div>
-    </section>
-<!-- Single Date Field -->
-    <?php
-$event_date = get_ccc_field('event_date', get_the_ID());
-if ($event_date) {
-    echo '<p>Event Date: ' . esc_html($event_date) . '</p>';
-}
-?>
-
-<!-- DateTime Field -->
-<?php
-$event_datetime = get_ccc_field('event_datetime', get_the_ID());
-if ($event_datetime) {
-    echo '<p>Event Date & Time: ' . esc_html($event_datetime) . '</p>';
-}
-?>
-
-<!-- Time Range Field -->
- <?php
-$time_range = get_ccc_field('event_time_range', get_the_ID());
-if ($time_range && is_array($time_range)) {
-    echo '<p>Event Time: ' . esc_html($time_range['from']) . ' - ' . esc_html($time_range['to']) . '</p>';
-    echo '<p>Duration: ' . esc_html($time_range['duration']) . '</p>';
-}
-?>
-
-<!-- Date Range Field -->
- <?php
-$date_range = get_ccc_field('event_date_range', get_the_ID());
-if ($date_range && is_array($date_range)) {
-    echo '<p>Event Period: ' . esc_html($date_range['from']) . ' to ' . esc_html($date_range['to']) . '</p>';
-    echo '<p>Duration: ' . esc_html($date_range['duration_days']) . ' days</p>';
-}
-?>
+<?php } ?>
 
 
 <style>
-    h1 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
+    .color_field {
+        background-color:
+            <?php echo esc_html($main_color); ?>
+        ;
     }
 
-    img {
-        width: 100px;
-        height: 100px;
+    .color_field:hover {
+        background-color:
+            <?php echo esc_html($hover_color); ?>
+        ;
     }
 
-    video {
-        width: 400px;
-        height: 100%;
+    .adjusted_color {
+        background-color:
+            <?php echo esc_html($adjusted_color); ?>
+        ;
     }
 
-    <?php echo get_ccc_color_css_variables_root('color'); ?>
-
-    .text_color {
-        color: var(--ccc-color-main);
-        transition: color 0.3s ease;
-        cursor: pointer;
-    }
-
-    .adjusted-text_color {
-        color: var(--ccc-color-adjusted);
-        transition: color 0.3s ease;
-        cursor: pointer;
-    }
-
-    .text_color:hover {
-        color: var(--ccc-color-hover);
+    .adjusted_color:hover {
+        background-color:
+            <?php echo esc_html($hover_color); ?>
+        ;
     }
 </style>
 
